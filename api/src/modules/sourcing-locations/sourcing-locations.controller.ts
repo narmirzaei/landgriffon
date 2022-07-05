@@ -44,6 +44,8 @@ import { SourcingLocationsMaterialsService } from 'modules/sourcing-locations/so
 import { SetUserInterceptor } from 'decorators/set-user.interceptor';
 import { LocationTypesDto } from 'modules/sourcing-locations/dto/location-type.sourcing-locations.dto';
 import { GetLocationTypesDto } from 'modules/sourcing-locations/dto/location-types-options.sourcing-locations.dto';
+import { GetAvailableYearsDto } from './dto/get-available-years.dto';
+import { GetAvailableYearsResponseDto } from './dto/years.sourcing-location.dto';
 
 @Controller(`/api/v1/sourcing-locations`)
 @ApiTags(sourcingLocationResource.className)
@@ -125,6 +127,22 @@ export class SourcingLocationsController {
     @Query(ValidationPipe) locationTypesOptions: GetLocationTypesDto,
   ): Promise<LocationTypesDto> {
     return this.sourcingLocationsService.getLocationTypes(locationTypesOptions);
+  }
+
+  @ApiOperation({
+    description: 'Gets available years for the given entity filters',
+  })
+  @ApiOkResponse({ type: GetAvailableYearsResponseDto })
+  @Get('/years')
+  async getAvailableYears(
+    @Query(ValidationPipe) getAvailableYearsDto: GetAvailableYearsDto,
+  ): Promise<GetAvailableYearsResponseDto> {
+    const years: number[] =
+      await this.sourcingLocationsService.getAvailableYears(
+        getAvailableYearsDto,
+      );
+
+    return { data: years };
   }
 
   @ApiOperation({ description: 'Find sourcing location by id' })

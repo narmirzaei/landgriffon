@@ -30,6 +30,7 @@ import { AdminRegionsService } from 'modules/admin-regions/admin-regions.service
 import { BusinessUnitsService } from 'modules/business-units/business-units.service';
 import { SuppliersService } from 'modules/suppliers/suppliers.service';
 import { MaterialsService } from 'modules/materials/materials.service';
+import { GetAvailableYearsDto } from './dto/get-available-years.dto';
 
 @Injectable()
 export class SourcingLocationsService extends AppBaseService<
@@ -164,6 +165,36 @@ export class SourcingLocationsService extends AppBaseService<
     }
 
     return queryBuilder.getMany();
+  }
+
+  async getAvailableYears(dto: GetAvailableYearsDto): Promise<number[]> {
+    //Load all descendant ids of all the entity filters first to update the DTO
+    if (dto.adminRegionIds) {
+      dto.adminRegionIds =
+        await this.adminRegionService.getAdminRegionDescendants(
+          dto.adminRegionIds,
+        );
+    }
+    if (dto.materialIds) {
+      dto.materialIds = await this.materialsService.getMaterialsDescendants(
+        dto.materialIds,
+      );
+    }
+    if (dto.businessUnitIds) {
+      dto.businessUnitIds =
+        await this.businessUnitsService.getBusinessUnitsDescendants(
+          dto.businessUnitIds,
+        );
+    }
+    if (dto.supplierIds) {
+      dto.supplierIds = await this.suppliersService.getSuppliersDescendants(
+        dto.supplierIds,
+      );
+    }
+
+    return this.sourcingLocationRepository.getAvailableYearsForIntervention(
+      dto,
+    );
   }
 
   async getLocationTypes(

@@ -1,6 +1,7 @@
 import {
   Brackets,
   EntityRepository,
+  getManager,
   SelectQueryBuilder,
   WhereExpressionBuilder,
 } from 'typeorm';
@@ -8,6 +9,7 @@ import { SourcingLocation } from 'modules/sourcing-locations/sourcing-location.e
 import { GetLocationTypesDto } from 'modules/sourcing-locations/dto/location-types-options.sourcing-locations.dto';
 import { AppBaseRepository } from 'utils/app-base.repository';
 import { NotFoundException } from '@nestjs/common';
+import { GetAvailableYearsDto } from './dto/get-available-years.dto';
 
 @EntityRepository(SourcingLocation)
 export class SourcingLocationRepository extends AppBaseRepository<SourcingLocation> {
@@ -53,5 +55,45 @@ export class SourcingLocationRepository extends AppBaseRepository<SourcingLocati
     }
 
     return locationTypes;
+  }
+
+  async getAvailableYearsForIntervention(
+    dto: GetAvailableYearsDto,
+  ): Promise<number[]> {
+    const queryBuilder: SelectQueryBuilder<number> = getManager()
+      .createQueryBuilder()
+      .select('sr.year')
+      .distinct()
+      .from('sourcingLocations', 'sl')
+      .leftJoin('sl.sourcingRecords', 'sr')
+      .where('sl.interventionType IS NULL')
+      .andWhere('sl."materialId" IN (:...materialIds)', {
+        materialIds: dto.materialIds,
+      });
+
+    // Optional filters:
+    if (dto.businessUnitIds) {
+      queryBuilder.andWhere('sl."businessUnitId" IN (:...businessUnits)', {
+        businessUnits: dto.businessUnitIds,
+      });
+    }
+    if (dto.adminRegionIds) {
+      queryBuilder.andWhere('sl.adminRegionId IN (:...adminRegion)', {
+        adminRegion: dto.adminRegionIds,
+      });
+    }
+    if (dto.supplierIds) {
+      queryBuilder.andWhere(
+        new Brackets((qb: WhereExpressionBuilder) => {
+          qb.where('sl."t1SupplierId" IN (:...suppliers)', {
+            suppliers: dto.supplierIds,
+          }).orWhere('sl."producerId" IN (:...suppliers)', {
+            suppliers: dto.supplierIds,
+          });
+        }),
+      );
+    }
+
+    return queryBuilder.getMany();
   }
 }
