@@ -28,6 +28,19 @@ import { GeoCodingAbstractClass } from 'modules/geo-coding/geo-coding-abstract-c
 import { MissingH3DataError } from 'modules/indicator-records/errors/missing-h3-data.error';
 import { TasksService } from 'modules/tasks/tasks.service';
 import { IndicatorRecord } from 'modules/indicator-records/indicator-record.entity';
+import { UnitsService } from 'modules/units/units.service';
+import { Unit } from 'modules/units/unit.entity';
+import { UnitConversion } from 'modules/unit-conversions/unit-conversion.entity';
+import { UnitConversionsService } from 'modules/unit-conversions/unit-conversions.service';
+import { CreateUnitConversionDto } from 'modules/unit-conversions/dto/create.unit-conversion.dto';
+import { CreateIndicatorDto } from 'modules/indicators/dto/create.indicator.dto';
+import {
+  Indicator,
+  INDICATOR_TYPES,
+} from 'modules/indicators/indicator.entity';
+import { H3Data } from 'modules/h3-data/h3-data.entity';
+import { H3DataService } from 'modules/h3-data/h3-data.service';
+import { IndicatorsService } from 'modules/indicators/indicators.service';
 
 export interface LocationData {
   locationAddressInput?: string;
@@ -37,19 +50,25 @@ export interface LocationData {
 }
 
 export interface SourcingRecordsSheets extends Record<string, any[]> {
+  indicators: Record<string, any>[];
   materials: Record<string, any>[];
   countries: Record<string, any>[];
   businessUnits: Record<string, any>[];
   suppliers: Record<string, any>[];
   sourcingData: Record<string, any>[];
+  units: Record<string, any>[];
+  unitConversions: Record<string, any>[];
 }
 
 const SHEETS_MAP: Record<string, keyof SourcingRecordsSheets> = {
+  Indicators: 'indicators', // TODO Indicators with capital?
   materials: 'materials',
   'business units': 'businessUnits',
   suppliers: 'suppliers',
   countries: 'countries',
   'for upload': 'sourcingData',
+  units: 'units',
+  'unit conversions': 'unitConversions',
 };
 
 @Injectable()
@@ -72,6 +91,10 @@ export class SourcingDataImportService {
     protected readonly geoCodingService: GeoCodingAbstractClass,
     protected readonly indicatorRecordsService: IndicatorRecordsService,
     protected readonly tasksService: TasksService,
+    protected readonly indicatorService: IndicatorsService,
+    protected readonly unitService: UnitsService,
+    protected readonly unitConversionService: UnitConversionsService,
+    protected readonly h3DataService: H3DataService,
   ) {}
 
   async importSourcingData(filePath: string, taskId: string): Promise<any> {
@@ -102,6 +125,20 @@ export class SourcingDataImportService {
         );
       }
 
+      this.logger.log('Inserting DTOs...');
+      const units: Unit[] = await this.unitService.createMany(
+        dtoMatchedData.units,
+      );
+
+      await this.createUnitConversions(dtoMatchedData.unitConversions, units);
+
+      const indicators: Indicator[] = await this.createIndicators(
+        dtoMatchedData.indicators,
+        units,
+      );
+
+      await this.relateIndicatorsWithH3Data(indicators);
+
       const businessUnits: BusinessUnit[] =
         await this.businessUnitService.createTree(dtoMatchedData.businessUnits);
 
@@ -115,8 +152,10 @@ export class SourcingDataImportService {
           materials,
           dtoMatchedData.sourcingData,
         );
+
       // TODO: TBD What to do when there is some location where we cannot determine its admin-region: i.e coordinates
       //       in the middle of the sea
+      this.logger.log('Geocoding...');
       const geoCodedSourcingData: SourcingData[] =
         await this.geoCodingService.geoCodeLocations(
           sourcingDataWithOrganizationalEntities,
@@ -133,11 +172,10 @@ export class SourcingDataImportService {
 
       await this.sourcingLocationService.save(geoCodedSourcingData);
 
-      this.logger.log('Generating Indicator Records...');
-
       // TODO: Current approach calculates Impact for all Sourcing Records present in the DB
       //       Getting H3 data for calculations is done within DB so we need to improve the error handling
       //       TBD: What to do when there is no H3 for a Material
+      this.logger.log('Generating Indicator Records...');
       try {
         await this.indicatorRecordsService.createIndicatorRecordsForAllSourcingRecords();
         this.logger.log('Indicator Records generated');
@@ -149,8 +187,8 @@ export class SourcingDataImportService {
           throw new MissingH3DataError(
             `Missing H3 Data to calculate Impact in Import`,
           );
-          throw err;
         }
+        throw err;
       }
     } finally {
       await this.fileService.deleteDataFromFS(filePath);
@@ -189,6 +227,7 @@ export class SourcingDataImportService {
   async cleanDataBeforeImport(): Promise<void> {
     this.logger.log('Cleaning database before import...');
     try {
+      //TODO clearing the Indicators table, leaves H3Datas dangling, with and indicatorId pointing to a nonexistent indicator
       await this.indicatorRecordsService.clearTable();
       await this.businessUnitService.clearTable();
       await this.supplierService.clearTable();
@@ -199,6 +238,60 @@ export class SourcingDataImportService {
       throw new Error(
         `Database could not been cleaned before loading new dataset: ${message}`,
       );
+    }
+  }
+
+  /** Even though itnernally Nest's BaseService does convert a DTO to an Entity before saving,
+   * it does not do it, for any of the properties that might be other Entities
+   */
+  private createUnitConversions(
+    unitConversions: CreateUnitConversionDto[],
+    units: Unit[],
+  ): Promise<UnitConversion[]> {
+    for (const unitConversionElement of unitConversions) {
+      const unit: Unit | undefined = units.find(
+        (value: Unit) => unitConversionElement.unit1 === value.name,
+      );
+
+      if (unit) {
+        unitConversionElement.unit = unit;
+      }
+    }
+
+    return this.unitConversionService.createMany(unitConversions);
+  }
+
+  private createIndicators(
+    indicators: CreateIndicatorDto[],
+    units: Unit[],
+  ): Promise<Indicator[]> {
+    for (const indicator of indicators) {
+      const unit: Unit | undefined = units.find(
+        (value: Unit) => indicator.unitName === value.name,
+      );
+
+      if (unit) {
+        indicator.unit = unit;
+      }
+    }
+
+    return this.indicatorService.createMany(indicators);
+  }
+
+  private async relateIndicatorsWithH3Data(
+    indicators: Indicator[],
+  ): Promise<void> {
+    for (const indicator of indicators) {
+      const h3DataList: H3Data[] =
+        await this.h3DataService.findH3ByIndicatorNameCode(
+          indicator.nameCode as INDICATOR_TYPES,
+        );
+
+      for (const h3Data of h3DataList) {
+        h3Data.indicatorId = indicator.id;
+      }
+
+      await this.h3DataService.save(h3DataList);
     }
   }
 

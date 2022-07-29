@@ -12,6 +12,7 @@ import {
   INDICATOR_STATUS,
   INDICATOR_TYPES,
 } from 'modules/indicators/indicator.entity';
+import { Unit } from 'modules/units/unit.entity';
 
 export class CreateIndicatorDto {
   @IsString()
@@ -20,6 +21,13 @@ export class CreateIndicatorDto {
   @MaxLength(40)
   @ApiProperty()
   name!: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  @MinLength(2)
+  @MaxLength(40)
+  shortName?: string;
 
   @IsString()
   @IsOptional()
@@ -40,7 +48,16 @@ export class CreateIndicatorDto {
 
   @IsString()
   @IsOptional()
+  @ApiProperty()
+  @MinLength(2)
+  @MaxLength(40)
+  unitName?: string;
+
+  @IsString()
+  @IsOptional()
   @IsJSON()
   @ApiPropertyOptional()
   metadata?: string;
+
+  unit?: Unit;
 }

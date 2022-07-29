@@ -214,6 +214,14 @@ export abstract class AppBaseService<
         [],
       );
   }
+
+  createMany(createModels: CreateModel[]): Promise<Entity[]> {
+    return Promise.all(
+      createModels.map((createModel: CreateModel) => {
+        return this.create(createModel);
+      }),
+    );
+  }
 }
 
 export class JSONAPIEntityData {

@@ -8,6 +8,7 @@ import { difference } from 'lodash';
 export class FileService<T extends Record<string, any[]>> {
   private readonly logger: Logger = new Logger(FileService.name);
 
+  // TODO is it necessary to be async? xlsx readfile is seems to be synchronous
   async transformToJson(
     filePath: string,
     sheetsMap: Record<string, keyof T>,

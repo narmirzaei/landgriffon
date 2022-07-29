@@ -64,6 +64,7 @@
     "swagger-ui-express": "~4.1.6",
     "tiny-types": "^1.17.0",
     "typeorm": "0.2.41",
+    "ts-enum-util": "~4.0.2",
     "uuid": "~8.3.2",
     "xlsx": "~0.17.4",
     "yargs": "^17.3.1"

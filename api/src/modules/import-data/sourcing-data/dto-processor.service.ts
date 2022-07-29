@@ -16,6 +16,11 @@ import { SourcingRecord } from 'modules/sourcing-records/sourcing-record.entity'
 import { SourcingDataExcelValidator } from 'modules/import-data/sourcing-data/validators/sourcing-data.class.validator';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { CreateIndicatorDto } from 'modules/indicators/dto/create.indicator.dto';
+import { INDICATOR_TYPES } from 'modules/indicators/indicator.entity';
+import { $enum } from 'ts-enum-util';
+import { CreateUnitDto } from 'modules/units/dto/create.unit.dto';
+import { CreateUnitConversionDto } from 'modules/unit-conversions/dto/create.unit-conversion.dto';
 
 /**
  * @debt: Define a more accurate DTO / Interface / Class for API-DB trades
@@ -28,11 +33,14 @@ export interface SourcingData extends CreateSourcingLocationDto {
 }
 
 export interface SourcingRecordsDtos {
+  indicators: CreateIndicatorDto[];
   materials: CreateMaterialDto[];
   adminRegions: CreateAdminRegionDto[];
   businessUnits: CreateBusinessUnitDto[];
   suppliers: CreateSupplierDto[];
   sourcingData: SourcingData[];
+  units: CreateUnitDto[];
+  unitConversions: CreateUnitConversionDto[];
 }
 
 const SOURCING_LOCATION_PROPERTIES: Array<string> = [
@@ -70,16 +78,27 @@ export class SourcingRecordsDtoProcessorService {
     sourcingLocationGroupId?: string,
   ): Promise<SourcingRecordsDtos> {
     this.logger.debug(`Creating DTOs from sourcing records sheets`);
-    const materials: CreateMaterialDto[] = await this.createMaterialDtos(
+
+    const materials: CreateMaterialDto[] = this.createMaterialDtos(
       importData.materials,
     );
-    const businessUnits: CreateBusinessUnitDto[] =
-      await this.createBusinessUnitDtos(importData.businessUnits);
-    const suppliers: CreateSupplierDto[] = await this.createSupplierDtos(
+    const businessUnits: CreateBusinessUnitDto[] = this.createBusinessUnitDtos(
+      importData.businessUnits,
+    );
+    const suppliers: CreateSupplierDto[] = this.createSupplierDtos(
       importData.suppliers,
     );
-    const adminRegions: CreateAdminRegionDto[] =
-      await this.createAdminRegionDtos(importData.countries);
+    const adminRegions: CreateAdminRegionDto[] = this.createAdminRegionDtos(
+      importData.countries,
+    );
+
+    const indicators: CreateIndicatorDto[] = this.createIndicatorDtos(
+      importData.indicators,
+    );
+
+    const units: CreateUnitDto[] = this.createUnitDtos(importData.units);
+    const unitConversions: CreateUnitConversionDto[] =
+      this.createUnitConversionDtos(importData.unitConversions);
 
     const processedSourcingData: Record<string, any> =
       await this.cleanCustomData(importData.sourcingData);
@@ -92,16 +111,19 @@ export class SourcingRecordsDtoProcessorService {
     /**
      * Builds SourcingData from parsed XLSX
      */
-    const sourcingData: SourcingData[] = await this.createSourcingDataDTOs(
+    const sourcingData: SourcingData[] = this.createSourcingDataDTOs(
       processedSourcingData.sourcingData,
       sourcingLocationGroupId,
     );
     return {
+      indicators,
       materials,
       businessUnits,
       suppliers,
       adminRegions,
       sourcingData,
+      units,
+      unitConversions,
     };
   }
 
@@ -191,15 +213,36 @@ export class SourcingRecordsDtoProcessorService {
     return { sourcingData };
   }
 
+  private createIndicatorDtos(
+    importData: Record<string, any>[],
+  ): CreateIndicatorDto[] {
+    return importData.map((value: Record<string, any>) =>
+      this.createIndicatorDTOFromData(value),
+    );
+  }
+
+  private createUnitDtos(importData: Record<string, any>[]): CreateUnitDto[] {
+    return importData.map((value: Record<string, any>) =>
+      this.createUnitDTOFromData(value),
+    );
+  }
+
+  private createUnitConversionDtos(
+    importData: Record<string, any>[],
+  ): CreateUnitConversionDto[] {
+    return importData.map((value: Record<string, any>) =>
+      this.createUnitConversionDTOFromData(value),
+    );
+  }
   /**
    * Creates an array of CreateMaterialDto objects from the JSON data processed from the XLSX file
    *
    * @param importData
    * @private
    */
-  private async createMaterialDtos(
+  private createMaterialDtos(
     importData: Record<string, any>[],
-  ): Promise<CreateMaterialDto[]> {
+  ): CreateMaterialDto[] {
     const materialList: CreateMaterialDto[] = [];
     importData.forEach((importRow: Record<string, any>) => {
       materialList.push(this.createMaterialDTOFromData(importRow));
@@ -213,9 +256,9 @@ export class SourcingRecordsDtoProcessorService {
    * @param importData
    * @private
    */
-  private async createBusinessUnitDtos(
+  private createBusinessUnitDtos(
     importData: Record<string, any>[],
-  ): Promise<CreateBusinessUnitDto[]> {
+  ): CreateBusinessUnitDto[] {
     const businessUnitDtos: CreateBusinessUnitDto[] = [];
     importData.forEach((importRow: Record<string, any>) => {
       businessUnitDtos.push(this.createBusinessUnitDTOFromData(importRow));
@@ -229,9 +272,9 @@ export class SourcingRecordsDtoProcessorService {
    * @param importData
    * @private
    */
-  private async createSupplierDtos(
+  private createSupplierDtos(
     importData: Record<string, any>[],
-  ): Promise<CreateSupplierDto[]> {
+  ): CreateSupplierDto[] {
     const supplierDtos: CreateSupplierDto[] = [];
     importData.forEach((importRow: Record<string, any>) => {
       supplierDtos.push(this.crateSuppliersDTOFromData(importRow));
@@ -245,9 +288,9 @@ export class SourcingRecordsDtoProcessorService {
    * @param importData
    * @private
    */
-  private async createAdminRegionDtos(
+  private createAdminRegionDtos(
     importData: Record<string, any>[],
-  ): Promise<CreateAdminRegionDto[]> {
+  ): CreateAdminRegionDto[] {
     const adminRegionDtos: CreateAdminRegionDto[] = [];
     importData.forEach((importRow: Record<string, any>) => {
       adminRegionDtos.push(this.createAdminRegionDTOFromData(importRow));
@@ -262,10 +305,10 @@ export class SourcingRecordsDtoProcessorService {
    * @param sourcingLocationGroupId
    * @private
    */
-  private async createSourcingDataDTOs(
+  private createSourcingDataDTOs(
     importData: Record<string, any>[],
     sourcingLocationGroupId?: string,
-  ): Promise<SourcingData[]> {
+  ): SourcingData[] {
     this.logger.debug(
       `Creating sourcing data DTOs from ${importData.length} data rows`,
     );
@@ -294,6 +337,47 @@ export class SourcingRecordsDtoProcessorService {
     );
 
     return sourcingLocationDtos;
+  }
+
+  private createIndicatorDTOFromData(indicatorData: Record<string, any>): any {
+    if (!$enum(INDICATOR_TYPES).isValue(indicatorData.name_code)) {
+      throw new Error(
+        `Error Creating Indicator: Unsupported Indicator with nameCode ${indicatorData.nameCode}`,
+      );
+    }
+
+    const indicatorDto: CreateIndicatorDto = new CreateIndicatorDto();
+    indicatorDto.name = indicatorData.name;
+    indicatorDto.shortName = indicatorData.short_name;
+    indicatorDto.description = indicatorData.description;
+    indicatorDto.status = indicatorData.status;
+    indicatorDto.metadata = indicatorData.metadata;
+    indicatorDto.unitName = indicatorData.unit_name;
+    indicatorDto.nameCode = $enum(INDICATOR_TYPES).asValueOrThrow(
+      indicatorData.name_code,
+    );
+    return indicatorDto;
+  }
+
+  private createUnitDTOFromData(unitData: Record<string, any>): any {
+    const unitDto: CreateUnitDto = new CreateUnitDto();
+    unitDto.name = unitData.name;
+    unitDto.shortName = unitData.short_name;
+    unitDto.description = unitData.description;
+    unitDto.symbol = unitData.symbol;
+
+    return unitDto;
+  }
+
+  private createUnitConversionDTOFromData(
+    unitConversionData: Record<string, any>,
+  ): any {
+    const unitConversionDto: CreateUnitConversionDto =
+      new CreateUnitConversionDto();
+    unitConversionDto.unit1 = unitConversionData.unit1;
+    unitConversionDto.unit2 = unitConversionData.unit2;
+    unitConversionDto.factor = unitConversionData.factor;
+    return unitConversionDto;
   }
 
   private createMaterialDTOFromData(materialData: Record<string, any>): any {

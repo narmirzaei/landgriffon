@@ -67,6 +67,10 @@ export class H3Data extends BaseEntity {
   @Column({ nullable: true })
   indicatorId: string;
 
+  //TODO provisional hack to allow importing indicators in the Excel import
+  @Column({ nullable: true })
+  indicatorNameCode: string;
+
   @Column({ type: 'json', nullable: true })
   metadata?: JSON;
 

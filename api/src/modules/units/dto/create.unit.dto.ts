@@ -17,6 +17,13 @@ export class CreateUnitDto {
 
   @IsString()
   @IsOptional()
+  @MinLength(2)
+  @MaxLength(40)
+  @ApiProperty()
+  shortName?: string;
+
+  @IsString()
+  @IsOptional()
   @ApiPropertyOptional()
   symbol?: string;
 

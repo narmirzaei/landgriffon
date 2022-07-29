@@ -19,6 +19,10 @@ import { ImportDataConsumer } from 'modules/import-data/workers/import-data.cons
 import { ImportDataService } from 'modules/import-data/import-data.service';
 import { TasksModule } from 'modules/tasks/tasks.module';
 import { importQueueName } from 'modules/import-data/workers/import-queue.name';
+import { UnitsModule } from 'modules/units/units.module';
+import { UnitConversionsModule } from 'modules/unit-conversions/unit-conversions.module';
+import { H3DataModule } from 'modules/h3-data/h3-data.module';
+import { IndicatorsModule } from 'modules/indicators/indicators.module';
 
 @Module({
   imports: [
@@ -36,6 +40,10 @@ import { importQueueName } from 'modules/import-data/workers/import-queue.name';
     GeoRegionsModule,
     IndicatorRecordsModule,
     TasksModule,
+    UnitsModule,
+    UnitConversionsModule,
+    H3DataModule,
+    IndicatorsModule,
   ],
   providers: [
     SourcingDataImportService,

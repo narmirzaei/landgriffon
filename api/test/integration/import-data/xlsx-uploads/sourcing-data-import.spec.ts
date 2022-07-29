@@ -20,6 +20,7 @@ import {
   createAdminRegion,
   createBusinessUnit,
   createGeoRegion,
+  createH3Data,
   createMaterial,
   createScenarioIntervention,
   createSourcingLocation,
@@ -43,14 +44,25 @@ import { IndicatorRecordRepository } from 'modules/indicator-records/indicator-r
 import { IndicatorRepository } from 'modules/indicators/indicator.repository';
 import { H3DataRepository } from 'modules/h3-data/h3-data.repository';
 import { MaterialsToH3sService } from 'modules/materials/materials-to-h3s.service';
-import { h3BasicFixture } from '../../../e2e/h3-data/mocks/h3-fixtures';
+import {
+  h3BasicFixture,
+  h3IndicatorExampleDataFixture,
+} from '../../../e2e/h3-data/mocks/h3-fixtures';
 import { SourcingDataImportService } from 'modules/import-data/sourcing-data/sourcing-data-import.service';
 import { FileService } from 'modules/import-data/file.service';
-import { createWorldToCalculateIndicatorRecords } from '../../../utils/indicator-records-preconditions';
 import { GeoCodingAbstractClass } from 'modules/geo-coding/geo-coding-abstract-class';
 import { Material } from 'modules/materials/material.entity';
 import { ScenarioIntervention } from 'modules/scenario-interventions/scenario-intervention.entity';
 import { SourcingRecordsWithIndicatorRawDataDto } from 'modules/sourcing-records/dto/sourcing-records-with-indicator-raw-data.dto';
+import {
+  Indicator,
+  INDICATOR_TYPES,
+} from '../../../../src/modules/indicators/indicator.entity';
+import { UnitRepository } from '../../../../src/modules/units/unit.repository';
+import { UnitConversionRepository } from '../../../../src/modules/unit-conversions/unit-conversion.repository';
+import { getManager } from 'typeorm';
+import { Unit } from '../../../../src/modules/units/unit.entity';
+import { UnitConversion } from '../../../../src/modules/unit-conversions/unit-conversion.entity';
 let tablesToDrop: string[] = [];
 
 let missingDataFallbackPolicy: string = 'error';
@@ -144,6 +156,8 @@ describe('Sourcing Data import', () => {
   let indicatorRepository: IndicatorRepository;
   let sourcingLocationGroupRepository: SourcingLocationGroupRepository;
   let h3DataRepository: H3DataRepository;
+  let unitRepository: UnitRepository;
+  let unitConversionRepository: UnitConversionRepository;
   let sourcingDataImportService: SourcingDataImportService;
   let moduleFixture: TestingModule;
 
@@ -191,6 +205,10 @@ describe('Sourcing Data import', () => {
     indicatorRepository =
       moduleFixture.get<IndicatorRepository>(IndicatorRepository);
     h3DataRepository = moduleFixture.get<H3DataRepository>(H3DataRepository);
+    unitConversionRepository = moduleFixture.get<UnitConversionRepository>(
+      UnitConversionRepository,
+    );
+    unitRepository = moduleFixture.get<UnitRepository>(UnitRepository);
     sourcingDataImportService = moduleFixture.get<SourcingDataImportService>(
       SourcingDataImportService,
     );
@@ -209,6 +227,8 @@ describe('Sourcing Data import', () => {
     await sourcingLocationRepository.delete({});
     await sourcingLocationGroupRepository.delete({});
     await h3DataRepository.delete({});
+    await unitConversionRepository.delete({});
+    await unitRepository.delete({});
 
     if (tablesToDrop.length > 0) {
       await dropH3DataMock(tablesToDrop);
@@ -244,8 +264,7 @@ describe('Sourcing Data import', () => {
       geoRegion,
     });
 
-    const indicatorPreconditions =
-      await createWorldToCalculateIndicatorRecords();
+    const indicatorPreconditions = await createWorldForImport();
 
     tablesToDrop = [
       ...(await createMaterialTreeForXLSXImport()),
@@ -267,8 +286,7 @@ describe('Sourcing Data import', () => {
       geoRegion,
     });
 
-    const indicatorPreconditions =
-      await createWorldToCalculateIndicatorRecords();
+    const indicatorPreconditions = await createWorldForImport();
     tablesToDrop = [
       ...(await createMaterialTreeForXLSXImport()),
       ...indicatorPreconditions.h3tableNames,
@@ -294,6 +312,18 @@ describe('Sourcing Data import', () => {
       await sourcingRecordRepository.find();
     expect(sourcingRecords).toHaveLength(495);
 
+    const indicators: Indicator[] = await indicatorRepository.find();
+    console.log('out indicators ' + JSON.stringify(indicators));
+    expect(indicators).toHaveLength(4);
+
+    const units: Unit[] = await unitRepository.find();
+    console.log('out units ' + JSON.stringify(units));
+    expect(units).toHaveLength(7);
+    const unitConversions: UnitConversion[] =
+      await unitConversionRepository.find();
+    console.log('out conversions ' + JSON.stringify(unitConversions));
+    expect(unitConversions).toHaveLength(5);
+
     const indicatorRecords: IndicatorRecord[] =
       await indicatorRecordRepository.find();
     expect(indicatorRecords).toHaveLength(495 * 4);
@@ -315,8 +345,7 @@ describe('Sourcing Data import', () => {
       geoRegion,
     });
 
-    const indicatorPreconditions =
-      await createWorldToCalculateIndicatorRecords();
+    const indicatorPreconditions = await createWorldForImport();
     tablesToDrop = [
       ...(await createMaterialTreeForXLSXImport()),
       ...indicatorPreconditions.h3tableNames,
@@ -348,7 +377,7 @@ describe('Sourcing Data import', () => {
     });
 
     await createMaterialTreeForXLSXImport();
-    await createWorldToCalculateIndicatorRecords();
+    await createWorldForImport();
 
     const materials: Material[] = await materialRepository.find();
 
@@ -589,3 +618,61 @@ describe('Sourcing Data import', () => {
     });
   });
 });
+
+async function createWorldForImport(): Promise<any> {
+  const deforestationH3Data = await createH3Data({
+    h3tableName: 'h3_grid_deforestation_global',
+    h3columnName: 'hansenLoss2019',
+    year: 2000,
+    indicatorNameCode: INDICATOR_TYPES.DEFORESTATION,
+  });
+  const biodiversityLossH3Data = await createH3Data({
+    h3tableName: 'h3_grid_bio_global',
+    h3columnName: 'lciaPslRPermanentCrops',
+    year: 2000,
+    indicatorNameCode: INDICATOR_TYPES.BIODIVERSITY_LOSS,
+  });
+  const carbonEmissionsH3Data = await createH3Data({
+    h3tableName: 'h3_grid_carbon_global',
+    h3columnName: 'earthstat2000GlobalHectareEmissions',
+    year: 2000,
+    indicatorNameCode: INDICATOR_TYPES.CARBON_EMISSIONS,
+  });
+  const waterRiskH3Data = await createH3Data({
+    h3tableName: 'h3_grid_wf_global',
+    h3columnName: 'wfBltotMmyrT',
+    year: 2000,
+    indicatorNameCode: INDICATOR_TYPES.UNSUSTAINABLE_WATER_USE,
+  });
+
+  for await (const indicatorH3 of [
+    deforestationH3Data,
+    biodiversityLossH3Data,
+    carbonEmissionsH3Data,
+    waterRiskH3Data,
+  ]) {
+    await getManager().query(
+      `CREATE TABLE "${indicatorH3.h3tableName}" (h3index h3index, "${indicatorH3.h3columnName}" float4);`,
+    );
+    let query = `INSERT INTO ${indicatorH3.h3tableName} (h3index, "${indicatorH3.h3columnName}") VALUES `;
+    const queryArr = [];
+    for (const [key, value] of Object.entries(h3IndicatorExampleDataFixture)) {
+      queryArr.push(`('${key}', ${value})`);
+    }
+    query = query.concat(queryArr.join());
+    await getManager().query(query);
+  }
+
+  return {
+    deforestation: deforestationH3Data,
+    waterRisk: waterRiskH3Data,
+    biodiversityLoss: biodiversityLossH3Data,
+    carbonEmissions: carbonEmissionsH3Data,
+    h3tableNames: [
+      deforestationH3Data.h3tableName,
+      waterRiskH3Data.h3tableName,
+      biodiversityLossH3Data.h3tableName,
+      carbonEmissionsH3Data.h3tableName,
+    ],
+  };
+}

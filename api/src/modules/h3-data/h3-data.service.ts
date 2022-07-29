@@ -95,6 +95,16 @@ export class H3DataService {
     );
   }
 
+  async findH3ByIndicatorNameCode(
+    indicatorNameCode: INDICATOR_TYPES,
+  ): Promise<H3Data[]> {
+    return this.h3DataRepository.find({ indicatorNameCode });
+  }
+
+  async save(h3Datas: H3Data[]): Promise<H3Data[]> {
+    return this.h3DataRepository.save(h3Datas);
+  }
+
   async getMaterialMapByResolution(
     materialId: string,
     resolution: number,
