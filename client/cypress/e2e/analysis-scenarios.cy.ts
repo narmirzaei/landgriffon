@@ -7,7 +7,7 @@ describe('Analysis and scenarios', () => {
 
     cy.intercept(
       'GET',
-      '/api/v1/scenarios?page[number]=1&page[size]=10&sort=-updatedAt&include=scenarioInterventions',
+      '/api/v1/scenarios?page[number]=1&page[size]=10&sort=-updatedAt&include=scenarioInterventions&hasInterventions=true',
       {
         statusCode: 200,
         fixture: 'scenario/scenarios',
