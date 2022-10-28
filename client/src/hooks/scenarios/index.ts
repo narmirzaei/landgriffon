@@ -33,6 +33,7 @@ type QueryParams = {
   pageParam?: number;
   searchTerm?: string;
   include?: string;
+  hasInterventions?: boolean;
 };
 
 const DEFAULT_QUERY_OPTIONS = {

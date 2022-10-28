@@ -42,6 +42,7 @@ const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement
     sort: sort as string,
     searchTerm,
     include: 'scenarioInterventions',
+    hasInterventions: true,
   });
 
   const scenariosList: Scenario[] = useMemo(() => {
