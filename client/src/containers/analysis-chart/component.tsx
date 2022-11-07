@@ -1,7 +1,9 @@
-import { useRouter } from 'next/router';
+import { useAtomValue } from 'jotai';
 
 import ImpactChart from './impact-chart';
 import ComparisonChart from './comparison-chart';
+
+import { compareScenarioIdAtom } from 'store/atoms';
 
 import type { Indicator } from 'types';
 
@@ -10,8 +12,7 @@ type AnalysisChartProps = {
 };
 
 const AnalysisChart: React.FC<AnalysisChartProps> = ({ indicator }) => {
-  const { query } = useRouter();
-  const { compareScenarioId } = query || {};
+  const compareScenarioId = useAtomValue(compareScenarioIdAtom);
 
   if (compareScenarioId) return <ComparisonChart indicator={indicator} />;
 

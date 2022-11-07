@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import classNames from 'classnames';
 import { InformationCircleIcon } from '@heroicons/react/outline';
+import { useAtomValue } from 'jotai';
 
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { useScenario } from 'hooks/scenarios';
@@ -9,7 +10,7 @@ import { scenarios } from 'store/features/analysis/scenarios';
 import { analysisFilters, setFilters } from 'store/features/analysis/filters';
 import Badge from 'components/badge/component';
 import { ComparisonToggle } from 'components/legend/item/comparisonModeToggle';
-import { useCurrentScenario } from 'store/atoms';
+import { currentScenarioAtom } from 'store/atoms';
 
 import type { SelectOption } from 'components/select';
 import type { FC } from 'react';
@@ -28,7 +29,7 @@ const AnalysisDynamicMetadata: FC<AnalysisDynamicMetadataTypes> = ({
   className,
 }: AnalysisDynamicMetadataTypes) => {
   const dispatch = useAppDispatch();
-  const currentScenario = useCurrentScenario();
+  const currentScenario = useAtomValue(currentScenarioAtom);
   const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
   const { data: scenario } = useScenario(currentScenario);
   const { data: scenarioB } = useScenario(scenarioToCompare);

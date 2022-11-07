@@ -1,22 +1,20 @@
 import { useCallback, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { pickBy } from 'lodash-es';
+import { useAtom } from 'jotai';
 
 import { useScenarios } from 'hooks/scenarios';
 import { useAppDispatch } from 'store/hooks';
-import {
-  setComparisonEnabled,
-  setScenarioToCompare as setScenarioToCompareAction,
-} from 'store/features/analysis/scenarios';
+import { setComparisonEnabled } from 'store/features/analysis/scenarios';
 import Select from 'components/select';
 import useEffectOnce from 'hooks/once';
+import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
 
 import type { Dispatch, FC } from 'react';
 import type { SelectOption } from 'components/select/types';
 
 const ScenariosComparison: FC = () => {
-  const { query, push } = useRouter();
-  const { scenarioId, compareScenarioId } = query;
+  const [scenarioId, setScenarioId] = useAtom(currentScenarioAtom);
+  const [compareScenarioId, setCompareScenarioId] = useAtom(compareScenarioIdAtom);
+
   const dispatch = useAppDispatch();
 
   const { data: scenarios } = useScenarios({
@@ -37,40 +35,18 @@ const ScenariosComparison: FC = () => {
 
   const handleOnChange = useCallback<Dispatch<SelectOption>>(
     (current) => {
-      // TODO: deprecated, we'll keep only for retro-compatibility
-      dispatch(setComparisonEnabled(!!current));
-      dispatch(setScenarioToCompareAction(current?.value || null));
-
-      push({ query: pickBy({ ...query, compareScenarioId: current?.value || null }) }, null, {
-        shallow: true,
-      });
+      setCompareScenarioId(current?.value || null);
     },
-    [dispatch, push, query],
+    [setCompareScenarioId],
   );
 
   // Reset comparison when options changes
   useEffect(() => {
     if (selected?.value && compareScenarioId !== selected?.value) {
-      // TO-DO: deprecated, we'll keep only for retro-compatibility
-      dispatch(setScenarioToCompareAction(null));
-      dispatch(setComparisonEnabled(false));
-
-      push(
-        {
-          query: pickBy({ ...query, compareScenarioId: null, scenarioId: selected?.value || null }),
-        },
-        null,
-        {
-          shallow: true,
-        },
-      );
+      setScenarioId(selected?.value || null);
+      setCompareScenarioId(null);
     }
-  }, [selected, dispatch, options, compareScenarioId, push, query]);
-
-  // We consider comparison is enabled when compareScenarioId is present
-  useEffectOnce(() => {
-    if (compareScenarioId) dispatch(setComparisonEnabled(true));
-  });
+  }, [selected, dispatch, options, compareScenarioId, setScenarioId, setCompareScenarioId]);
 
   return (
     <div data-testid="comparison-select">

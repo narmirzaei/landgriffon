@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { XCircleIcon } from '@heroicons/react/solid';
 import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import { sortBy } from 'lodash-es';
+import { useAtom } from 'jotai';
 
 import { useAppSelector } from 'store/hooks';
 import { analysisMap } from 'store/features/analysis';
@@ -12,9 +13,10 @@ import ZoomControl from 'components/map/controls/zoom';
 import PopUp from 'components/map/popup';
 import BasemapControl from 'components/map/controls/basemap';
 import { NUMBER_FORMAT } from 'utils/number-format';
-import Map, { INITIAL_VIEW_STATE } from 'components/map';
+import Map from 'components/map';
 import { useAllContextualLayersData } from 'hooks/h3-data/contextual';
 import useH3MaterialData from 'hooks/h3-data/material';
+import { viewStateAtom } from 'store/atoms';
 
 import type { MapStyle } from 'components/map';
 import type { BasemapValue } from 'components/map/controls/basemap/types';
@@ -89,7 +91,7 @@ const AnalysisMap = () => {
     setMapStyle(newStyle);
   }, []);
 
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
+  const [viewState, setViewState] = useAtom(viewStateAtom);
 
   return (
     <div className="absolute top-0 left-0 w-full h-full overflow-hidden" data-testid="analysis-map">
@@ -133,7 +135,7 @@ const AnalysisMap = () => {
         <ZoomControl
           viewport={viewState}
           onZoomChange={(zoom) => {
-            setViewState({ ...viewState, zoom, transitionDuration: 250 });
+            setViewState((state) => ({ ...state, zoom, transitionDuration: 250 }));
           }}
         />
         <Legend />

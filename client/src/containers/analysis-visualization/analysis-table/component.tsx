@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { DownloadIcon } from '@heroicons/react/outline';
 import { uniq, omit } from 'lodash-es';
+import { useAtomValue } from 'jotai';
 
 import ComparisonCell from './comparison-cell/component';
 
@@ -17,7 +18,7 @@ import Table from 'components/table/component';
 import LineChart from 'components/chart/line';
 import { NUMBER_FORMAT } from 'utils/number-format';
 import { DEFAULT_PAGE_SIZES } from 'components/table/pagination/constants';
-import { useCurrentScenario } from 'store/atoms';
+import { currentScenarioAtom } from 'store/atoms';
 
 import type { ExpandedState, PaginationState, SortingState } from '@tanstack/react-table';
 import type { TableProps } from 'components/table/component';
@@ -69,7 +70,7 @@ const AnalysisTable = () => {
     () => ({ pagination: paginationState, sorting: sortingState, expanded: expandedState }),
     [expandedState, paginationState, sortingState],
   );
-  const currentScenario = useCurrentScenario();
+  const currentScenario = useAtomValue(currentScenarioAtom);
 
   const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
   const { data: indicators } = useIndicators({}, { select: (data) => data.data });

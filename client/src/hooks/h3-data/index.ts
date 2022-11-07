@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useAtomValue } from 'jotai';
 
 import useH3MaterialData from './material';
 import useH3ImpactData from './impact';
@@ -7,7 +8,7 @@ import { storeToQueryParams } from './utils';
 
 import { useAppSelector } from 'store/hooks';
 import { analysisFilters, scenarios } from 'store/features/analysis';
-import { useCurrentScenario } from 'store/atoms';
+import { currentScenarioAtom } from 'store/atoms';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type {
@@ -40,7 +41,7 @@ export const useH3Data = <T = H3APIResponse>({
   const isImpact = id === 'impact';
 
   const filters = useAppSelector(analysisFilters);
-  const scenarioId = useCurrentScenario();
+  const scenarioId = useAtomValue(currentScenarioAtom);
   const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
 
   const impactParams = useMemo(

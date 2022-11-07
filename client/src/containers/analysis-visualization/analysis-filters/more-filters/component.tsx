@@ -10,7 +10,7 @@ import {
   FloatingPortal,
 } from '@floating-ui/react-dom-interactions';
 import { Popover, Transition } from '@headlessui/react';
-import { useRouter } from 'next/router';
+import { useAtomValue } from 'jotai';
 
 import Materials from '../materials/component';
 import OriginRegions from '../origin-regions/component';
@@ -26,6 +26,7 @@ import { useSuppliersTrees } from 'hooks/suppliers';
 import { useLocationTypes } from 'hooks/location-types';
 import Button from 'components/button/component';
 import { flattenTree, recursiveMap, recursiveSort } from 'components/tree-select/utils';
+import { compareScenarioIdAtom, currentScenarioAtom, useOnAtomChange } from 'store/atoms';
 
 import type { TreeSelectOption } from 'components/tree-select/types';
 import type { AnalysisFiltersState } from 'store/features/analysis/filters';
@@ -59,9 +60,8 @@ const DEFAULT_QUERY_OPTIONS = {
 };
 
 const MoreFilters = () => {
-  const { query } = useRouter();
-  const { scenarioId, compareScenarioId } = query;
-
+  const scenarioId = useAtomValue(currentScenarioAtom);
+  const compareScenarioId = useAtomValue(compareScenarioIdAtom);
   const dispatch = useAppDispatch();
   const { materials, origins, suppliers, locationTypes } = useAppSelector(analysisFilters);
 
@@ -215,17 +215,16 @@ const MoreFilters = () => {
   );
 
   // Check current values are valid if the scenario changes
+  // TODO restore
   const handleScenarioChange = useCallback(() => {
     reviewFilterContent('materials', materials, materialOptions);
     reviewFilterContent('locationTypes', locationTypes, locationTypes);
     reviewFilterContent('origins', origins, origins);
     reviewFilterContent('suppliers', suppliers, suppliers);
-  }, [locationTypes, materialOptions, materials, origins, reviewFilterContent, suppliers]);
-
-  useEffect(() => {
-    handleScenarioChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scenarioId]);
+  }, [reviewFilterContent]);
+
+  useOnAtomChange(currentScenarioAtom, handleScenarioChange);
 
   return (
     <Popover className="relative">

@@ -3,6 +3,7 @@ import { XCircleIcon, PlusIcon } from '@heroicons/react/solid';
 import { RadioGroup } from '@headlessui/react';
 import Link from 'next/link';
 import { useAtom } from 'jotai';
+import { useUpdateAtom } from 'jotai/utils';
 
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import {
@@ -16,8 +17,7 @@ import ScenariosFilters from 'containers/scenarios/filters';
 import { Anchor } from 'components/button';
 import Loading from 'components/loading';
 import ScenarioItem from 'containers/scenarios/item';
-import useQueryParam from 'hooks/queryParam';
-import { currentScenarioAtom } from 'store/atoms';
+import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
 
 import type { MutableRefObject } from 'react';
 import type { Scenario } from 'containers/scenarios/types';
@@ -33,7 +33,7 @@ const ACTUAL_DATA: Scenario = {
 const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement> }> = ({
   scrollref,
 }) => {
-  const [, setScenarioToCompare] = useQueryParam<string>('scenarioToCompare');
+  const setScenarioToCompare = useUpdateAtom(compareScenarioIdAtom);
 
   const { sort, searchTerm } = useAppSelector(scenarios);
   const dispatch = useAppDispatch();
@@ -53,9 +53,9 @@ const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement
   const [scenarioId, setScenarioId] = useAtom(currentScenarioAtom);
 
   const handleOnChange = useCallback(
-    async (id: Scenario['id']) => {
+    (id: Scenario['id']) => {
       setScenarioId(id);
-      await setScenarioToCompare(null);
+      setScenarioToCompare(null);
 
       // TODO: deprecated, we'll keep only for retro-compatibility
       dispatch(setScenarioToCompareAction(null));
