@@ -17,6 +17,7 @@ import Table from 'components/table/component';
 import LineChart from 'components/chart/line';
 import { NUMBER_FORMAT } from 'utils/number-format';
 import { DEFAULT_PAGE_SIZES } from 'components/table/pagination/constants';
+import { useCurrentScenario } from 'store/atoms';
 
 import type { ExpandedState, PaginationState, SortingState } from '@tanstack/react-table';
 import type { TableProps } from 'components/table/component';
@@ -68,8 +69,9 @@ const AnalysisTable = () => {
     () => ({ pagination: paginationState, sorting: sortingState, expanded: expandedState }),
     [expandedState, paginationState, sortingState],
   );
+  const currentScenario = useCurrentScenario();
 
-  const { scenarioToCompare, isComparisonEnabled, currentScenario } = useAppSelector(scenarios);
+  const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
   const { data: indicators } = useIndicators({}, { select: (data) => data.data });
   const filters = useAppSelector(filtersForTabularAPI);
 

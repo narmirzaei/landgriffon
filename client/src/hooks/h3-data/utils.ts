@@ -23,7 +23,6 @@ export const storeToQueryParams = ({
   suppliers,
   origins,
   locationTypes,
-  currentScenario,
 }: Partial<AnalysisFiltersState & ScenariosState>) => {
   return {
     year: startYear,
@@ -32,7 +31,6 @@ export const storeToQueryParams = ({
     ...(suppliers?.length ? { supplierIds: suppliers?.map(({ value }) => value) } : {}),
     ...(origins?.length ? { originIds: origins?.map(({ value }) => value) } : {}),
     ...(locationTypes?.length ? { locationTypes: locationTypes?.map(({ value }) => value) } : {}),
-    scenarioId: currentScenario,
     resolution: origins?.length ? 6 : 4,
   };
 };

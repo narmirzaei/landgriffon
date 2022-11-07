@@ -9,11 +9,6 @@ export type ScenarioComparisonMode = 'relative' | 'absolute';
 export type ScenariosState = {
   isComparisonEnabled: boolean;
   comparisonMode: ScenarioComparisonMode;
-  /**
-   * The current scenario id
-   * If the current scenario is the actual data, the id will be null
-   */
-  currentScenario: Scenario['id'] | null;
   scenarioToCompare: Scenario['id'] | null;
   // To remove
   searchTerm: string;
@@ -29,7 +24,6 @@ export type ScenariosState = {
 export const initialState: ScenariosState = {
   isComparisonEnabled: false,
   comparisonMode: 'absolute',
-  currentScenario: null,
   scenarioToCompare: null,
   searchTerm: null,
   filter: 'all',
@@ -44,10 +38,6 @@ export const analysisScenariosSlice = createSlice({
   name: 'analysis/scenarios',
   initialState,
   reducers: {
-    setCurrentScenario: (state, action: PayloadAction<ScenariosState['currentScenario']>) => ({
-      ...state,
-      currentScenario: action.payload,
-    }),
     setComparisonEnabled: (
       state,
       action: PayloadAction<ScenariosState['isComparisonEnabled']>,
@@ -79,7 +69,6 @@ export const analysisScenariosSlice = createSlice({
 });
 
 export const {
-  setCurrentScenario,
   setComparisonEnabled,
   setScenarioToCompare,
   setComparisonMode,

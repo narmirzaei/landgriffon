@@ -2,14 +2,12 @@ import { useMemo, useCallback } from 'react';
 import { XCircleIcon, PlusIcon } from '@heroicons/react/solid';
 import { RadioGroup } from '@headlessui/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { pickBy } from 'lodash-es';
+import { useAtom } from 'jotai';
 
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import {
   scenarios,
   setComparisonEnabled,
-  setCurrentScenario,
   setScenarioToCompare as setScenarioToCompareAction,
 } from 'store/features/analysis/scenarios';
 import { useInfiniteScenarios } from 'hooks/scenarios';
@@ -18,6 +16,8 @@ import ScenariosFilters from 'containers/scenarios/filters';
 import { Anchor } from 'components/button';
 import Loading from 'components/loading';
 import ScenarioItem from 'containers/scenarios/item';
+import useQueryParam from 'hooks/queryParam';
+import { currentScenarioAtom } from 'store/atoms';
 
 import type { MutableRefObject } from 'react';
 import type { Scenario } from 'containers/scenarios/types';
@@ -33,8 +33,7 @@ const ACTUAL_DATA: Scenario = {
 const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement> }> = ({
   scrollref,
 }) => {
-  const { query, push } = useRouter();
-  const { scenarioId = ACTUAL_DATA.id } = query;
+  const [, setScenarioToCompare] = useQueryParam<string>('scenarioToCompare');
 
   const { sort, searchTerm } = useAppSelector(scenarios);
   const dispatch = useAppDispatch();
@@ -51,18 +50,18 @@ const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement
     return pages?.reduce((acc, { data }) => acc.concat(data?.data), []);
   }, [data]);
 
+  const [scenarioId, setScenarioId] = useAtom(currentScenarioAtom);
+
   const handleOnChange = useCallback(
-    (id: Scenario['id']) => {
-      push({ query: pickBy({ ...query, compareScenarioId: null, scenarioId: id }) }, null, {
-        shallow: false,
-      });
+    async (id: Scenario['id']) => {
+      setScenarioId(id);
+      await setScenarioToCompare(null);
 
       // TODO: deprecated, we'll keep only for retro-compatibility
-      dispatch(setCurrentScenario(id));
       dispatch(setScenarioToCompareAction(null));
       dispatch(setComparisonEnabled(false));
     },
-    [dispatch, push, query],
+    [dispatch, setScenarioId, setScenarioToCompare],
   );
 
   useBottomScrollListener(

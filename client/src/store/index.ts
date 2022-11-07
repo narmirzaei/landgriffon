@@ -12,7 +12,6 @@ import analysisFilters, {
 } from 'store/features/analysis/filters';
 import analysisMap, { initialState as analysisMapInitialState } from 'store/features/analysis/map';
 import analysisScenarios, {
-  setCurrentScenario,
   initialState as analysisScenariosInitialState,
   setScenarioToCompare,
 } from 'store/features/analysis/scenarios';
@@ -56,12 +55,6 @@ const QUERY_PARAMS_MAP: QueryParams = {
     rootState: 'analysis/ui',
     action: setSidebarCollapsed,
     defaultValue: analysisUIInitialState.isSidebarCollapsed,
-  },
-  scenarioId: {
-    stateName: 'currentScenario',
-    rootState: 'analysis/scenarios',
-    action: setCurrentScenario,
-    defaultValue: analysisScenariosInitialState.currentScenario,
   },
   compareScenarioId: {
     stateName: 'scenarioToCompare',

@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/router';
 
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -10,6 +11,7 @@ import useH3ImpactData from 'hooks/h3-data/impact';
 import useH3ComparisonData from 'hooks/h3-data/impact/comparison';
 import { scenarios } from 'store/features/analysis';
 import { storeToQueryParams } from 'hooks/h3-data/utils';
+import { currentScenarioAtom } from 'store/atoms';
 
 import type { LegendItem as LegendItemProp } from 'types';
 
@@ -17,25 +19,26 @@ export const useImpactLayer = () => {
   const dispatch = useAppDispatch();
   const filters = useAppSelector(analysisFilters);
   const {
-    query: { scenarioId, compareScenarioId },
+    query: { compareScenarioId },
   } = useRouter();
-  const isComparisonEnabled = !!compareScenarioId;
-  const { comparisonMode } = useAppSelector(scenarios);
-  const colorKey = !!compareScenarioId ? 'compare' : 'impact';
+  const scenarioId = useAtomValue(currentScenarioAtom);
+  const { scenarioToCompare, isComparisonEnabled, comparisonMode } = useAppSelector(scenarios);
+  const colorKey = compareScenarioId ? 'compare' : 'impact';
 
   const {
     layers: { impact: impactLayer },
   } = useAppSelector(analysisMap);
 
   const params = useMemo(
-    () =>
-      storeToQueryParams({
+    () => ({
+      ...storeToQueryParams({
         ...filters,
-        currentScenario: scenarioId as string,
-        scenarioToCompare: compareScenarioId as string,
+        scenarioToCompare,
         isComparisonEnabled,
       }),
-    [compareScenarioId, filters, isComparisonEnabled, scenarioId],
+      scenarioId,
+    }),
+    [filters, isComparisonEnabled, scenarioId, scenarioToCompare],
   );
 
   const { indicator } = filters;

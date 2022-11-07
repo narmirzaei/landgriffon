@@ -9,6 +9,7 @@ import { scenarios } from 'store/features/analysis/scenarios';
 import { analysisFilters, setFilters } from 'store/features/analysis/filters';
 import Badge from 'components/badge/component';
 import { ComparisonToggle } from 'components/legend/item/comparisonModeToggle';
+import { useCurrentScenario } from 'store/atoms';
 
 import type { SelectOption } from 'components/select';
 import type { FC } from 'react';
@@ -27,7 +28,8 @@ const AnalysisDynamicMetadata: FC<AnalysisDynamicMetadataTypes> = ({
   className,
 }: AnalysisDynamicMetadataTypes) => {
   const dispatch = useAppDispatch();
-  const { currentScenario, scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
+  const currentScenario = useCurrentScenario();
+  const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
   const { data: scenario } = useScenario(currentScenario);
   const { data: scenarioB } = useScenario(scenarioToCompare);
 

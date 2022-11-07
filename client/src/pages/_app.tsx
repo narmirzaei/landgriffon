@@ -7,6 +7,7 @@ import { SSRProvider } from '@react-aria/ssr';
 import { SessionProvider } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useDebounce } from 'rooks';
+import { Provider as JotaiProvider } from 'jotai';
 
 import initStore from 'store';
 import TitleTemplate from 'utils/titleTemplate';
@@ -17,7 +18,6 @@ import type { NextPage } from 'next';
 import type { DehydratedState } from '@tanstack/react-query';
 import type { Session } from 'next-auth';
 import type { ParsedUrlQuery } from 'querystring';
-import { Provider as JotaiProvider } from 'jotai';
 
 import 'styles/globals.css';
 
