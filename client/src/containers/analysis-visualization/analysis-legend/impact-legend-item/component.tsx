@@ -1,12 +1,14 @@
 import { useCallback, useMemo } from 'react';
+import { useAtomValue } from 'jotai';
 
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { analysisMap, setLayer } from 'store/features/analysis/map';
-import { analysisFilters, scenarios } from 'store/features/analysis';
+import { analysisFilters } from 'store/features/analysis';
 import LegendTypeChoropleth from 'components/legend/types/choropleth';
 import LegendTypeComparative from 'components/legend/types/comparative';
 import LegendItem from 'components/legend/item';
 import { useIndicator } from 'hooks/indicators';
+import { isComparisonEnabledAtom } from 'store/atoms';
 
 import type { Legend } from 'types';
 
@@ -37,8 +39,7 @@ const ImpactLayer = () => {
       })) || [],
     [layer.metadata?.legend.items],
   );
-
-  const { isComparisonEnabled } = useAppSelector(scenarios);
+  const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
 
   const name = useMemo(() => {
     if (!layer.metadata?.legend?.name) return null;

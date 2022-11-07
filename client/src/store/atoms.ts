@@ -47,7 +47,7 @@ const atomWithQueryParamStorage = <T>(
     onChange,
   }: AtomStorageOptions<T> = {},
 ) => {
-  const atom = atomWithStorage<T>(key, initialValue, {
+  return atomWithStorage<T>(key, initialValue, {
     delayInit: true,
     removeItem: async (key) => {
       const url = new URL(Router.asPath);
@@ -60,7 +60,7 @@ const atomWithQueryParamStorage = <T>(
       if (!(key in Router.query) || !Router.isReady) return NO_STORAGE_VALUE;
       const queryValue = Router.query[key] as string;
 
-      const value = deserialize<T>(queryValue);
+      const value = deserialize(queryValue);
       if (!value) return NO_STORAGE_VALUE;
 
       return value;
@@ -90,20 +90,18 @@ const atomWithQueryParamStorage = <T>(
       };
     },
   });
-  return atom;
 };
 
 export const viewStateAtom = atom(INITIAL_VIEW_STATE);
-// export const currentScenarioAtom = atomWithNextHash<Scenario['id']>('scenarioId', null);
-// export const compareScenarioIdAtom = atomWithNextHash<Scenario['id']>('compareScenarioId', null);
-
-// export const viewStateAtom = atomWithQueryParamStorage<ViewState>('viewState', INITIAL_VIEW_STATE, {
-//   serialize: (view) => {
-//     return serialize(pick(view, ['latitude', 'longitude', 'zoom']));
-//   },
-// });
 export const currentScenarioAtom = atomWithQueryParamStorage<Scenario['id']>('scenarioId', null);
 export const compareScenarioIdAtom = atomWithQueryParamStorage<Scenario['id']>(
   'compareScenarioId',
   null,
 );
+
+export const isComparisonEnabledAtom = atom((get) => {
+  const scenarioId = get(currentScenarioAtom);
+  const scenarioCompId = get(compareScenarioIdAtom);
+
+  return !!scenarioId && !!scenarioCompId;
+});

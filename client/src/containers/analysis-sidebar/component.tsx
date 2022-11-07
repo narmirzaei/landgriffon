@@ -5,12 +5,7 @@ import Link from 'next/link';
 import { useAtom } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 
-import { useAppSelector, useAppDispatch } from 'store/hooks';
-import {
-  scenarios,
-  setComparisonEnabled,
-  setScenarioToCompare as setScenarioToCompareAction,
-} from 'store/features/analysis/scenarios';
+import { useAppSelector } from 'store/hooks';
 import { useInfiniteScenarios } from 'hooks/scenarios';
 import useBottomScrollListener from 'hooks/scroll';
 import ScenariosFilters from 'containers/scenarios/filters';
@@ -18,6 +13,7 @@ import { Anchor } from 'components/button';
 import Loading from 'components/loading';
 import ScenarioItem from 'containers/scenarios/item';
 import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
+import { scenarios } from 'store/features/analysis';
 
 import type { MutableRefObject } from 'react';
 import type { Scenario } from 'containers/scenarios/types';
@@ -36,7 +32,6 @@ const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement
   const setScenarioToCompare = useUpdateAtom(compareScenarioIdAtom);
 
   const { sort, searchTerm } = useAppSelector(scenarios);
-  const dispatch = useAppDispatch();
   const { fetchNextPage, hasNextPage, data, isLoading, error } = useInfiniteScenarios({
     sort: sort as string,
     'page[size]': 10,
@@ -56,12 +51,8 @@ const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement
     (id: Scenario['id']) => {
       setScenarioId(id);
       setScenarioToCompare(null);
-
-      // TODO: deprecated, we'll keep only for retro-compatibility
-      dispatch(setScenarioToCompareAction(null));
-      dispatch(setComparisonEnabled(false));
     },
-    [dispatch, setScenarioId, setScenarioToCompare],
+    [setScenarioId, setScenarioToCompare],
   );
 
   useBottomScrollListener(

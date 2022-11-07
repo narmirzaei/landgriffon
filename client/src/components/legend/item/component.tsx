@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useAtomValue } from 'jotai';
 
 import OpacityControl from './opacityControl';
 import DragHandle from './dragHandle';
@@ -6,8 +7,7 @@ import { ComparisonToggle } from './comparisonModeToggle';
 
 import InfoToolTip from 'components/info-tooltip/component';
 import Loading from 'components/loading';
-import { useAppSelector } from 'store/hooks';
-import { scenarios } from 'store/features/analysis';
+import { isComparisonEnabledAtom } from 'store/atoms';
 
 import type { Dispatch } from 'react';
 
@@ -38,7 +38,7 @@ export const LegendItem = ({
   main = false,
   showComparisonModeToggle = false,
 }: LegendItemProps) => {
-  const { isComparisonEnabled } = useAppSelector(scenarios);
+  const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
 
   return (
     <div

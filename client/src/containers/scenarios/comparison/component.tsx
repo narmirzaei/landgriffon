@@ -3,9 +3,7 @@ import { useAtom } from 'jotai';
 
 import { useScenarios } from 'hooks/scenarios';
 import { useAppDispatch } from 'store/hooks';
-import { setComparisonEnabled } from 'store/features/analysis/scenarios';
 import Select from 'components/select';
-import useEffectOnce from 'hooks/once';
 import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
 
 import type { Dispatch, FC } from 'react';
@@ -43,8 +41,8 @@ const ScenariosComparison: FC = () => {
   // Reset comparison when options changes
   useEffect(() => {
     if (selected?.value && compareScenarioId !== selected?.value) {
-      setScenarioId(selected?.value || null);
       setCompareScenarioId(null);
+      setScenarioId(selected?.value || null);
     }
   }, [selected, dispatch, options, compareScenarioId, setScenarioId, setCompareScenarioId]);
 

@@ -11,7 +11,7 @@ import useH3ImpactData from 'hooks/h3-data/impact';
 import useH3ComparisonData from 'hooks/h3-data/impact/comparison';
 import { scenarios } from 'store/features/analysis';
 import { storeToQueryParams } from 'hooks/h3-data/utils';
-import { currentScenarioAtom } from 'store/atoms';
+import { compareScenarioIdAtom, currentScenarioAtom, isComparisonEnabledAtom } from 'store/atoms';
 
 import type { LegendItem as LegendItemProp } from 'types';
 
@@ -22,8 +22,11 @@ export const useImpactLayer = () => {
     query: { compareScenarioId },
   } = useRouter();
   const scenarioId = useAtomValue(currentScenarioAtom);
-  const { scenarioToCompare, isComparisonEnabled, comparisonMode } = useAppSelector(scenarios);
-  const colorKey = compareScenarioId ? 'compare' : 'impact';
+
+  const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
+  const scenarioToCompare = useAtomValue(compareScenarioIdAtom);
+  const { comparisonMode } = useAppSelector(scenarios);
+  const colorKey = scenarioToCompare ? 'compare' : 'impact';
 
   const {
     layers: { impact: impactLayer },
@@ -31,12 +34,10 @@ export const useImpactLayer = () => {
 
   const params = useMemo(
     () => ({
-      ...storeToQueryParams({
-        ...filters,
-        scenarioToCompare,
-        isComparisonEnabled,
-      }),
+      ...storeToQueryParams(filters),
       scenarioId,
+      scenarioToCompare,
+      isComparisonEnabled,
     }),
     [filters, isComparisonEnabled, scenarioId, scenarioToCompare],
   );

@@ -8,7 +8,6 @@ import ComparisonCell from './comparison-cell/component';
 
 import { useAppSelector } from 'store/hooks';
 import { filtersForTabularAPI } from 'store/features/analysis/selector';
-import { scenarios } from 'store/features/analysis/scenarios';
 import { useIndicators } from 'hooks/indicators';
 import { useImpactData } from 'hooks/impact';
 import { useImpactComparison, useImpactScenarioComparison } from 'hooks/impact/comparison';
@@ -18,7 +17,7 @@ import Table from 'components/table/component';
 import LineChart from 'components/chart/line';
 import { NUMBER_FORMAT } from 'utils/number-format';
 import { DEFAULT_PAGE_SIZES } from 'components/table/pagination/constants';
-import { currentScenarioAtom } from 'store/atoms';
+import { compareScenarioIdAtom, currentScenarioAtom, isComparisonEnabledAtom } from 'store/atoms';
 
 import type { ExpandedState, PaginationState, SortingState } from '@tanstack/react-table';
 import type { TableProps } from 'components/table/component';
@@ -71,8 +70,8 @@ const AnalysisTable = () => {
     [expandedState, paginationState, sortingState],
   );
   const currentScenario = useAtomValue(currentScenarioAtom);
-
-  const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
+  const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
+  const scenarioToCompare = useAtomValue(compareScenarioIdAtom);
   const { data: indicators } = useIndicators({}, { select: (data) => data.data });
   const filters = useAppSelector(filtersForTabularAPI);
 

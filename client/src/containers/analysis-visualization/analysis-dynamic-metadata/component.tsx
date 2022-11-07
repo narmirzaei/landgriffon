@@ -6,11 +6,10 @@ import { useAtomValue } from 'jotai';
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { useScenario } from 'hooks/scenarios';
 import { useIndicator } from 'hooks/indicators';
-import { scenarios } from 'store/features/analysis/scenarios';
 import { analysisFilters, setFilters } from 'store/features/analysis/filters';
 import Badge from 'components/badge/component';
 import { ComparisonToggle } from 'components/legend/item/comparisonModeToggle';
-import { currentScenarioAtom } from 'store/atoms';
+import { compareScenarioIdAtom, currentScenarioAtom, isComparisonEnabledAtom } from 'store/atoms';
 
 import type { SelectOption } from 'components/select';
 import type { FC } from 'react';
@@ -30,7 +29,8 @@ const AnalysisDynamicMetadata: FC<AnalysisDynamicMetadataTypes> = ({
 }: AnalysisDynamicMetadataTypes) => {
   const dispatch = useAppDispatch();
   const currentScenario = useAtomValue(currentScenarioAtom);
-  const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
+  const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
+  const scenarioToCompare = useAtomValue(compareScenarioIdAtom);
   const { data: scenario } = useScenario(currentScenario);
   const { data: scenarioB } = useScenario(scenarioToCompare);
 

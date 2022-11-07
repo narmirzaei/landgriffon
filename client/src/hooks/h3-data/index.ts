@@ -7,8 +7,8 @@ import useH3ContextualData from './contextual';
 import { storeToQueryParams } from './utils';
 
 import { useAppSelector } from 'store/hooks';
-import { analysisFilters, scenarios } from 'store/features/analysis';
-import { currentScenarioAtom } from 'store/atoms';
+import { analysisFilters } from 'store/features/analysis';
+import { compareScenarioIdAtom, currentScenarioAtom, isComparisonEnabledAtom } from 'store/atoms';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type {
@@ -42,18 +42,19 @@ export const useH3Data = <T = H3APIResponse>({
 
   const filters = useAppSelector(analysisFilters);
   const scenarioId = useAtomValue(currentScenarioAtom);
-  const { scenarioToCompare, isComparisonEnabled } = useAppSelector(scenarios);
+  const scenarioToCompare = useAtomValue(compareScenarioIdAtom);
+  const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
 
   const impactParams = useMemo(
     () => ({
       ...storeToQueryParams({
         ...filters,
-        scenarioToCompare,
-        isComparisonEnabled,
         materialId,
         startYear: year,
       }),
       scenarioId,
+      scenarioToCompare,
+      isComparisonEnabled,
     }),
     [scenarioId, filters, isComparisonEnabled, materialId, scenarioToCompare, year],
   );

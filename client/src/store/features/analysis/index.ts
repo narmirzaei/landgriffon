@@ -30,6 +30,6 @@ export const { setFilter, setFilters, resetFiltersAndOverride } = analysisFilter
 
 export const { setLayer } = analysisMapSlice.actions;
 
-export const { setScenarioToCompare, setComparisonMode } = analysisScenariosSlice.actions;
+export const { setComparisonMode } = analysisScenariosSlice.actions;
 
 export const analysis = (state: FeatureState) => state.analysis;
