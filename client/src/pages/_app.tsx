@@ -17,6 +17,7 @@ import type { NextPage } from 'next';
 import type { DehydratedState } from '@tanstack/react-query';
 import type { Session } from 'next-auth';
 import type { ParsedUrlQuery } from 'querystring';
+import { Provider as JotaiProvider } from 'jotai';
 
 import 'styles/globals.css';
 
@@ -79,17 +80,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <meta name="viewport" content="width=1024" />
       </Head>
       <TitleTemplate titleTemplate="%s - LandGriffon" />
-      <ReduxProvider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <Hydrate state={pageProps.dehydratedState}>
-            <SessionProvider session={pageProps.session}>
-              <OverlayProvider>
-                <SSRProvider>{getLayout(<Component {...pageProps} />)}</SSRProvider>
-              </OverlayProvider>
-            </SessionProvider>
-          </Hydrate>
-        </QueryClientProvider>
-      </ReduxProvider>
+      <JotaiProvider>
+        <ReduxProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <Hydrate state={pageProps.dehydratedState}>
+              <SessionProvider session={pageProps.session}>
+                <OverlayProvider>
+                  <SSRProvider>{getLayout(<Component {...pageProps} />)}</SSRProvider>
+                </OverlayProvider>
+              </SessionProvider>
+            </Hydrate>
+          </QueryClientProvider>
+        </ReduxProvider>
+      </JotaiProvider>
     </>
   );
 }
