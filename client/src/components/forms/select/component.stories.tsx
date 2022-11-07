@@ -2,7 +2,7 @@ import Component from '.';
 
 import type { SelectProps, Option } from './types';
 
-const data: Option[] = [
+const data: Option<number>[] = [
   { value: 1, label: 'Wade Cooper' },
   { value: 2, label: 'Arlene Mccoy' },
   { value: 3, label: 'Devon Webb' },
@@ -45,7 +45,7 @@ const Template = (args: SelectProps) => {
       error={args.error ? 'This is an example of error message' : null}
       name="people"
       id="mySelect"
-      options={data}
+      options={data as unknown as Option[]}
       placeholder="Select an person"
     />
   );

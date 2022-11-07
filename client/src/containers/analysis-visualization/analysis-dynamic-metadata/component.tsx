@@ -1,15 +1,18 @@
 import { useMemo, useCallback } from 'react';
 import classNames from 'classnames';
-import { InformationCircleIcon } from '@heroicons/react/outline';
-import { useAtomValue } from 'jotai';
+import { InformationCircleIcon } from '@heroicons/react/solid';
+import { useAtom, useAtomValue } from 'jotai';
 
-import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { useScenario } from 'hooks/scenarios';
 import { useIndicator } from 'hooks/indicators';
-import { analysisFilters, setFilters } from 'store/features/analysis/filters';
 import Badge from 'components/badge/component';
 import { ComparisonToggle } from 'components/legend/item/comparisonModeToggle';
-import { compareScenarioIdAtom, currentScenarioAtom, isComparisonEnabledAtom } from 'store/atoms';
+import {
+  analysisFilterAtom,
+  compareScenarioIdAtom,
+  currentScenarioAtom,
+  isComparisonEnabledAtom,
+} from 'store/atoms';
 
 import type { SelectOption } from 'components/select';
 import type { FC } from 'react';
@@ -27,7 +30,6 @@ type AnalysisDynamicMetadataTypes = {
 const AnalysisDynamicMetadata: FC<AnalysisDynamicMetadataTypes> = ({
   className,
 }: AnalysisDynamicMetadataTypes) => {
-  const dispatch = useAppDispatch();
   const currentScenario = useAtomValue(currentScenarioAtom);
   const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
   const scenarioToCompare = useAtomValue(compareScenarioIdAtom);
@@ -44,15 +46,15 @@ const AnalysisDynamicMetadata: FC<AnalysisDynamicMetadataTypes> = ({
     [scenarioToCompare, scenarioB?.title],
   );
 
-  const { materials, origins, suppliers, locationTypes, indicator } =
-    useAppSelector(analysisFilters);
+  const [{ materials, origins, suppliers, locationTypes, indicator }, setFilters] =
+    useAtom(analysisFilterAtom);
 
   const handleRemoveBadge = useCallback(
     (id: string, list: SelectOption[], option: SelectOption) => {
       const filteredKeys = list.filter((key) => option.label !== key.label);
-      dispatch(setFilters({ [id]: filteredKeys }));
+      setFilters({ [id]: filteredKeys });
     },
-    [dispatch],
+    [setFilters],
   );
 
   const { data: unit } = useIndicator(indicator?.value, { select: (data) => data?.unit });

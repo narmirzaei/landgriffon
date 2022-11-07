@@ -1,18 +1,17 @@
 import React, { useCallback } from 'react';
+import { useAtom } from 'jotai';
 
 import Component from './component';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisFilters, setFilter } from 'store/features/analysis/filters';
+import { analysisFilterAtom } from 'store/atoms';
 
 const LocationTypesFilter: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { locationTypes } = useAppSelector(analysisFilters);
+  const [{ locationTypes }, setFilters] = useAtom(analysisFilterAtom);
   const handleChange = useCallback(
     (selected) => {
-      dispatch(setFilter({ id: 'locationTypes', value: [selected] }));
+      setFilters({ locationTypes: [selected] });
     },
-    [dispatch],
+    [setFilters],
   );
 
   return <Component current={locationTypes} onChange={handleChange} />;

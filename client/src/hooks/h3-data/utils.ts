@@ -1,8 +1,8 @@
 import { scaleOrdinal, scaleThreshold } from 'd3-scale';
 
+import type { AnalysisFilters } from 'store/atoms';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { ScaleOrdinal, ScaleThreshold } from 'd3-scale';
-import type { AnalysisFiltersState } from 'store/features/analysis/filters';
 import type { H3APIResponse, H3Item, Legend, RGBColor } from 'types';
 
 export type H3ImpactResponse = H3APIResponse & {
@@ -22,7 +22,7 @@ export const storeToQueryParams = ({
   suppliers,
   origins,
   locationTypes,
-}: Partial<AnalysisFiltersState>) => {
+}: Partial<AnalysisFilters>) => {
   return {
     year: startYear,
     indicatorId: indicator?.value === 'all' ? null : indicator?.value,

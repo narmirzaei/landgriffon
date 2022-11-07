@@ -11,15 +11,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { useAtomValue } from 'jotai';
 
 import CustomLegend from './legend';
 import CustomTooltip from './tooltip';
 
-import { useAppSelector } from 'store/hooks';
-import { filtersForTabularAPI } from 'store/features/analysis/selector';
 import { useImpactComparison } from 'hooks/impact/comparison';
 import Loading from 'components/loading';
 import { NUMBER_FORMAT } from 'utils/number-format';
+import { filtersForTabularApiAtom } from 'store/atoms';
 
 import type { Indicator } from 'types';
 import type { ImpactComparisonParams } from 'hooks/impact/comparison';
@@ -50,7 +50,7 @@ const StackedAreaChart: React.FC<StackedAreaChartProps> = ({ indicator }) => {
 
   const [itemOpacity, setItemOpacity] = useState<Record<string, number>>({});
 
-  const filters = useAppSelector(filtersForTabularAPI);
+  const filters = useAtomValue(filtersForTabularApiAtom);
   const isScenarioVsScenario = scenarioId && compareScenarioId;
 
   const params: Partial<ImpactComparisonParams> = {

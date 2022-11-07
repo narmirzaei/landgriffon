@@ -1,14 +1,16 @@
 import { useCallback, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
+import { useAtom } from 'jotai';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { useAppSelector } from 'store/hooks';
 import { analysisUI } from 'store/features/analysis/ui';
-import { analysisFilters, setFilter } from 'store/features/analysis/filters';
 import { useIndicators } from 'hooks/indicators';
 import Select from 'components/forms/select';
+import { analysisFilterAtom } from 'store/atoms';
 
 import type { Indicator } from 'types';
-import type { SelectProps, Option } from 'components/forms/select/types';
+import type { SelectOption } from 'components/select';
+import type { SelectProps } from 'components/forms/select/types';
 
 const ALL = {
   id: 'all',
@@ -21,8 +23,7 @@ const IndicatorsFilter = () => {
   const { query = {}, replace } = useRouter();
   const { indicator } = query;
   const { visualizationMode } = useAppSelector(analysisUI);
-  const filters = useAppSelector(analysisFilters);
-  const dispatch = useAppDispatch();
+  const [filters, setFilters] = useAtom(analysisFilterAtom);
 
   const {
     data = [],
@@ -42,7 +43,7 @@ const IndicatorsFilter = () => {
   }, [data, visualizationMode]);
 
   // Those lines allow to keep the selected indicator when the user changes the visualization mode
-  const current = useMemo<Option>(() => {
+  const current = useMemo<SelectOption>(() => {
     const selected = options?.find((option) => option.value === indicator);
     return selected || options?.[0];
   }, [indicator, options]);
@@ -50,14 +51,9 @@ const IndicatorsFilter = () => {
   // Update the filter when the indicator changes
   useEffect(() => {
     if (current && filters.indicator?.value !== current.value) {
-      dispatch(
-        setFilter({
-          id: 'indicator',
-          value: current,
-        }),
-      );
+      setFilters({ indicator: current });
     }
-  }, [current, dispatch, filters.indicator?.value]);
+  }, [current, , filters.indicator?.value, setFilters]);
 
   const handleChange: SelectProps['onChange'] = useCallback(
     (selected) => {

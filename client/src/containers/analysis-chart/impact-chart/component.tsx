@@ -16,12 +16,10 @@ import { useAtomValue } from 'jotai';
 import CustomLegend from './legend';
 import CustomTooltip from './tooltip';
 
-import { filtersForTabularAPI } from 'store/features/analysis/selector';
 import { useImpactRanking } from 'hooks/impact/ranking';
-import { useAppSelector } from 'store/hooks';
 import Loading from 'components/loading';
 import { NUMBER_FORMAT } from 'utils/number-format';
-import { currentScenarioAtom } from 'store/atoms';
+import { currentScenarioAtom, filtersForTabularApiAtom } from 'store/atoms';
 
 import type { ExtendedLegendProps } from './legend/component';
 import type { Indicator } from 'types';
@@ -37,7 +35,7 @@ const alternativeOpacity = 0.1;
 
 const StackedAreaChart: React.FC<StackedAreaChartProps> = ({ indicator }) => {
   const [itemOpacity, setItemOpacity] = useState<Record<string, number>>({});
-  const filters = useAppSelector(filtersForTabularAPI);
+  const filters = useAtomValue(filtersForTabularApiAtom);
   const scenarioId = useAtomValue(currentScenarioAtom);
 
   const params = {

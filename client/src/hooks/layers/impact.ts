@@ -3,7 +3,6 @@ import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/router';
 
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisFilters } from 'store/features/analysis/filters';
 import { analysisMap, setLayer, setLayerDeckGLProps } from 'store/features/analysis/map';
 import { NUMBER_FORMAT } from 'utils/number-format';
 import { COLOR_RAMPS } from 'utils/colors';
@@ -11,6 +10,7 @@ import useH3ImpactData from 'hooks/h3-data/impact';
 import useH3ComparisonData from 'hooks/h3-data/impact/comparison';
 import { storeToQueryParams } from 'hooks/h3-data/utils';
 import {
+  analysisFilterAtom,
   compareScenarioIdAtom,
   comparisonModeAtom,
   currentScenarioAtom,
@@ -21,10 +21,7 @@ import type { LegendItem as LegendItemProp } from 'types';
 
 export const useImpactLayer = () => {
   const dispatch = useAppDispatch();
-  const filters = useAppSelector(analysisFilters);
-  const {
-    query: { compareScenarioId },
-  } = useRouter();
+  const filters = useAtomValue(analysisFilterAtom);
   const scenarioId = useAtomValue(currentScenarioAtom);
 
   const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
@@ -54,7 +51,7 @@ export const useImpactLayer = () => {
     {
       ...params,
       baseScenarioId: params.scenarioId,
-      comparedScenarioId: compareScenarioId as string,
+      comparedScenarioId: scenarioToCompare,
       relative: comparisonMode === 'relative',
     },
     { enabled: isComparisonEnabled },

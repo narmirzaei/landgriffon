@@ -1,20 +1,21 @@
 import React, { useCallback } from 'react';
+import { useUpdateAtom } from 'jotai/utils';
 
 import Component from './component';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { setFilter, analysisFilters } from 'store/features/analysis/filters';
+import { analysisFilterAtom, useFilterValue } from 'store/atoms';
 
 const MaterialsFilter: React.FC<{ multiple?: boolean }> = (props) => {
   const { multiple = false } = props;
-  const dispatch = useAppDispatch();
-  const filters = useAppSelector(analysisFilters);
+  const setFilters = useUpdateAtom(analysisFilterAtom);
   const handleChange = useCallback(
-    (selected) => dispatch(setFilter({ id: 'suppliers', value: [selected] })),
-    [dispatch],
+    (selected) => setFilters({ suppliers: [selected] }),
+    [setFilters],
   );
 
-  return <Component current={filters.suppliers} multiple={multiple} onChange={handleChange} />;
+  const suppliers = useFilterValue('suppliers');
+
+  return <Component current={suppliers} multiple={multiple} onChange={handleChange} />;
 };
 
 export default MaterialsFilter;

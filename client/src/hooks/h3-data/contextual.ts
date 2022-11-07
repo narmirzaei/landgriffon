@@ -1,11 +1,13 @@
 import { useQuery, useQueries } from '@tanstack/react-query';
 import chroma from 'chroma-js';
+import { useAtomValue } from 'jotai';
 
 import { DEFAULT_QUERY_OPTIONS, scaleByLegendType } from './utils';
 
 import { apiRawService } from 'services/api';
-import { analysisFilters, analysisMap } from 'store/features/analysis';
+import { analysisMap } from 'store/features/analysis';
 import { useAppSelector } from 'store/hooks';
+import { analysisFilterAtom } from 'store/atoms';
 
 import type { ScenarioComparisonMode } from 'store/atoms';
 import type { ContextualH3APIParams, ErrorResponse, H3APIResponse, H3Item, Layer } from 'types';
@@ -40,8 +42,8 @@ const useH3ContextualData = <T = H3APIResponse>(
     ['h3-data-contextual', typeof id, ContextualH3APIParams]
   >,
 ) => {
-  const filters = useAppSelector(analysisFilters);
-  const { startYear, materials, indicator, suppliers, origins, locationTypes } = filters;
+  const { startYear, materials, indicator, suppliers, origins, locationTypes } =
+    useAtomValue(analysisFilterAtom);
 
   const params = {
     year: startYear,
@@ -99,8 +101,9 @@ export const useAllContextualLayersData = <T = { layerId: Layer['id'] } & H3APIR
   >,
 ) => {
   const { layers } = useAppSelector(analysisMap);
+
   const { startYear, materials, indicator, suppliers, origins, locationTypes } =
-    useAppSelector(analysisFilters);
+    useAtomValue(analysisFilterAtom);
 
   const urlParams: Omit<ContextualH3APIParams, 'relative'> = {
     year: startYear,

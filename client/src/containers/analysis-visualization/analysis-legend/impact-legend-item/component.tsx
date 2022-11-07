@@ -1,35 +1,29 @@
 import { useCallback, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 
-import { useAppSelector, useAppDispatch } from 'store/hooks';
+import { useAppSelector } from 'store/hooks';
 import { analysisMap, setLayer } from 'store/features/analysis/map';
-import { analysisFilters } from 'store/features/analysis';
 import LegendTypeChoropleth from 'components/legend/types/choropleth';
 import LegendTypeComparative from 'components/legend/types/comparative';
 import LegendItem from 'components/legend/item';
 import { useIndicator } from 'hooks/indicators';
-import { isComparisonEnabledAtom } from 'store/atoms';
+import { isComparisonEnabledAtom, useFilterValue } from 'store/atoms';
 
 import type { Legend } from 'types';
 
 const LAYER_ID = 'impact';
 
 const ImpactLayer = () => {
-  const dispatch = useAppDispatch();
-  const { indicator: indicatorOption } = useAppSelector(analysisFilters);
-
+  const indicatorOption = useFilterValue('indicator');
   const { data: indicator } = useIndicator(indicatorOption?.value);
 
   const {
     layers: { [LAYER_ID]: layer },
   } = useAppSelector(analysisMap);
 
-  const handleOpacity = useCallback(
-    (opacity: number) => {
-      dispatch(setLayer({ id: LAYER_ID, layer: { opacity } }));
-    },
-    [dispatch],
-  );
+  const handleOpacity = useCallback((opacity: number) => {
+    setLayer({ id: LAYER_ID, layer: { opacity } });
+  }, []);
 
   const legendItems = useMemo<Legend['items']>(
     () =>

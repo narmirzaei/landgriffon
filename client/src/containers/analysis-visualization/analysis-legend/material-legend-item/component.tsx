@@ -1,16 +1,16 @@
 import { useCallback, useMemo } from 'react';
+import { useAtom } from 'jotai';
 
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { analysisMap, setLayer } from 'store/features/analysis/map';
-import { analysisFilters } from 'store/features/analysis';
 import LegendTypeChoropleth from 'components/legend/types/choropleth';
 import LegendItem from 'components/legend/item';
 import { NUMBER_FORMAT } from 'utils/number-format';
 import { COLOR_RAMPS } from 'utils/colors';
 import Materials from 'containers/analysis-visualization/analysis-filters/materials/component';
 import { useMaterial } from 'hooks/materials';
-import { setFilter } from 'store/features/analysis/filters';
 import useH3MaterialData from 'hooks/h3-data/material';
+import { analysisFilterAtom } from 'store/atoms';
 
 import type { TreeSelectOption } from 'components/tree-select/types';
 import type { Legend, LegendItem as LegendItemsProps } from 'types';
@@ -19,7 +19,7 @@ const LAYER_ID = 'material';
 
 const MaterialLayer = () => {
   const dispatch = useAppDispatch();
-  const { indicator, materialId } = useAppSelector(analysisFilters);
+  const [{ indicator, materialId }, setFilters] = useAtom(analysisFilterAtom);
 
   const {
     layers: { [LAYER_ID]: layer },
@@ -71,9 +71,9 @@ const MaterialLayer = () => {
 
   const handleMaterialChange = useCallback(
     (material: TreeSelectOption) => {
-      dispatch(setFilter({ id: 'materialId', value: material?.value }));
+      setFilters({ materialId: material?.value as string });
     },
-    [dispatch],
+    [setFilters],
   );
 
   const Selector = useMemo(() => {

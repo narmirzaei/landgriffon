@@ -28,7 +28,7 @@ import Select from 'components/select';
 import InfoToolTip from 'components/info-tooltip/component';
 import { isCoordinates } from 'utils/coordinates';
 
-import type { SelectOption } from 'components/select/types';
+import type { SelectOption } from 'components/select';
 import type { Intervention, InterventionFormData } from '../types';
 
 type InterventionFormProps = {

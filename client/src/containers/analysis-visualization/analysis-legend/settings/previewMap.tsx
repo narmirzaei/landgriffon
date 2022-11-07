@@ -29,12 +29,17 @@ const INITIAL_PREVIEW_SETTINGS = {
 };
 
 const PreviewMap = ({ selectedLayerId, selectedMaterialId, onStatusChange }: PreviewMapProps) => {
-  const { data: materialYear } = useYears('material', [selectedMaterialId], 'all', {
-    enabled: !!selectedMaterialId,
-    select: (data) => {
-      return data?.[data?.length - 1];
+  const { data: materialYear } = useYears(
+    [selectedMaterialId],
+    'all',
+    {
+      enabled: !!selectedMaterialId,
+      select: (data) => {
+        return data?.[data?.length - 1];
+      },
     },
-  });
+    'material',
+  );
 
   const { data, isFetching, status } = useH3Data({
     id: selectedLayerId,

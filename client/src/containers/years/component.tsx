@@ -1,20 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAtom } from 'jotai';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisFilters, setFilter, setFilters } from 'store/features/analysis/filters';
 import { useYears } from 'hooks/years';
 import Select from 'components/forms/select';
+import { analysisFilterAtom } from 'store/atoms';
 
-import type { SelectProps } from 'components/forms/select/types';
+import type { Option, SelectProps } from 'components/forms/select/types';
 
 const YearsFilter: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const filters = useAppSelector(analysisFilters);
-  const { layer, materials, indicator, startYear } = filters;
+  const [filters, setFilters] = useAtom(analysisFilterAtom);
+  const { materials, indicator, startYear } = filters;
 
   const materialsIds = useMemo(() => materials.map((mat) => mat.value), [materials]);
-  const { data: years, isLoading } = useYears(layer, materialsIds, indicator?.value);
-  const [selectedOption, setSelectedOption] = useState<SelectProps['value']>(null);
+  const { data: years, isLoading } = useYears(materialsIds, indicator?.value);
+  const [selectedOption, setSelectedOption] = useState<Option<number>>(null);
 
   useEffect(() => {
     setSelectedOption({
@@ -23,7 +22,7 @@ const YearsFilter: React.FC = () => {
     });
   }, [startYear]);
 
-  const yearOptions: SelectProps['options'] = useMemo(
+  const yearOptions: Option<number>[] = useMemo(
     () =>
       years?.map((year) => ({
         label: year.toString(),
@@ -32,31 +31,30 @@ const YearsFilter: React.FC = () => {
     [years],
   );
 
-  const handleChange: SelectProps['onChange'] = useCallback(
+  const handleChange: SelectProps<number>['onChange'] = useCallback(
     (option) => {
       setSelectedOption(option);
-      dispatch(setFilter({ id: 'startYear', value: option.value }));
+      setFilters({ startYear: option.value });
     },
-    [dispatch],
+    [setFilters],
   );
 
   // Update filters when data changes
   useEffect(() => {
     if (years?.length && !isLoading) {
-      dispatch(
-        setFilters({ ...(startYear ? {} : { startYear: years[years.length - 1] }), endYear: null }),
-      );
+      setFilters({ ...(startYear ? {} : { startYear: years[years.length - 1] }), endYear: null });
     }
-  }, [dispatch, isLoading, years, startYear]);
+  }, [isLoading, years, startYear, setFilters]);
 
   return (
     <Select
       icon={<span className="text-sm text-gray-400">in</span>}
       loading={isLoading}
-      value={selectedOption}
-      options={yearOptions}
+      // TODO: make select generic
+      value={selectedOption as unknown as Option<string>}
+      options={yearOptions as unknown as Option<string>[]}
       placeholder="Select a year"
-      onChange={handleChange}
+      onChange={handleChange as unknown as SelectProps['onChange']}
     />
   );
 };

@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { apiRawService } from 'services/api';
 
 import type { Indicator, Material } from 'types';
-import type { AnalysisState } from 'store/features/analysis';
 import type { UseQueryOptions } from '@tanstack/react-query';
 
 const DEFAULT_QUERY_OPTIONS = {
@@ -16,10 +15,10 @@ const DEFAULT_QUERY_OPTIONS = {
 type YearsData = number[];
 
 export const useYears = <T = YearsData>(
-  layer: AnalysisState['analysis/filters']['layer'],
   materialIds: Material['id'][],
   indicatorId: Indicator['id'],
   options: UseQueryOptions<YearsData, unknown, T> = {},
+  layer: 'impact' | 'material' = 'impact',
 ) => {
   const enabled = (options.enabled ?? true) && !!indicatorId;
 

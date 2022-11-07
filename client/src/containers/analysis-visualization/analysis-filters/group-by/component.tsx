@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
+import { useAtom } from 'jotai';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisFilters, setFilter } from 'store/features/analysis/filters';
 import Select from 'components/forms/select';
+import { analysisFilterAtom } from 'store/atoms';
 
 import type { Option, SelectProps } from 'components/forms/select/types';
 import type { Group } from 'types';
@@ -33,8 +33,7 @@ const GROUP_BY_OPTIONS: Group[] = [
 
 const GroupByFilter: React.FC = () => {
   const { replace, query = {} } = useRouter();
-  const dispatch = useAppDispatch();
-  const filters = useAppSelector(analysisFilters);
+  const [filters, setFilters] = useAtom(analysisFilterAtom);
 
   const options: SelectProps['options'] = useMemo(
     () =>
@@ -61,14 +60,9 @@ const GroupByFilter: React.FC = () => {
 
   useEffect(() => {
     if (currentValue?.value !== filters.by) {
-      dispatch(
-        setFilter({
-          id: 'by',
-          value: currentValue?.value,
-        }),
-      );
+      setFilters({ by: currentValue?.value });
     }
-  }, [dispatch, currentValue, filters.by]);
+  }, [currentValue, filters.by, setFilters]);
 
   return (
     <Select

@@ -62,7 +62,7 @@ const Pagination: React.FC<PaginationProps> = ({
     onPageChange?.(totalPages);
   }, [onPageChange, totalPages]);
 
-  const handlePageSizeChange = useCallback<SelectProps['onChange']>(
+  const handlePageSizeChange = useCallback<SelectProps<number>['onChange']>(
     (nextPageSize) => {
       onChangePageSize(nextPageSize?.value as number);
     },

@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
 import { EyeIcon } from '@heroicons/react/solid';
+import { useAtom } from 'jotai';
 
 import PreviewMap from './previewMap';
 import MaterialSettings from './materialSettings';
@@ -12,11 +13,11 @@ import InfoToolTip from 'components/info-tooltip';
 import Search from 'components/search';
 import Toggle from 'components/toggle';
 import useFuse from 'hooks/fuse';
-import { analysisMap, setFilter, setLayer } from 'store/features/analysis';
+import { analysisMap, setLayer } from 'store/features/analysis';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisFilters } from 'store/features/analysis/filters';
 import Loading from 'components/loading';
 import Callout from 'components/callout';
+import { analysisFilterAtom } from 'store/atoms';
 
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { UseFuseOptions } from 'hooks/fuse';
@@ -158,7 +159,7 @@ const FUSE_OPTIONS: UseFuseOptions<CategoryWithLayers['layers'][number]> = {
 };
 
 const LegendSettings = ({ categories = [], onApply, onDismiss }: LegendSettingsProps) => {
-  const { materialId } = useAppSelector(analysisFilters);
+  const [{ materialId }, setFilters] = useAtom(analysisFilterAtom);
 
   const {
     layers: { impact, ..._initialLayerState },
@@ -196,10 +197,10 @@ const LegendSettings = ({ categories = [], onApply, onDismiss }: LegendSettingsP
       );
     });
 
-    dispatch(setFilter({ id: 'materialId', value: localMaterial }));
+    setFilters({ materialId: localMaterial });
 
     onApply?.(Object.values(localLayerState));
-  }, [dispatch, localLayerState, localMaterial, onApply]);
+  }, [dispatch, localLayerState, localMaterial, onApply, setFilters]);
 
   const flatLayers = useMemo(() => categories.flatMap(({ layers }) => layers), [categories]);
 

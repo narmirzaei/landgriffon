@@ -6,9 +6,12 @@ import useH3ImpactData from './impact';
 import useH3ContextualData from './contextual';
 import { storeToQueryParams } from './utils';
 
-import { useAppSelector } from 'store/hooks';
-import { analysisFilters } from 'store/features/analysis';
-import { compareScenarioIdAtom, currentScenarioAtom, isComparisonEnabledAtom } from 'store/atoms';
+import {
+  analysisFilterAtom,
+  compareScenarioIdAtom,
+  currentScenarioAtom,
+  isComparisonEnabledAtom,
+} from 'store/atoms';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type {
@@ -40,7 +43,7 @@ export const useH3Data = <T = H3APIResponse>({
   const isMaterial = id === 'material';
   const isImpact = id === 'impact';
 
-  const filters = useAppSelector(analysisFilters);
+  const filters = useAtomValue(analysisFilterAtom);
   const scenarioId = useAtomValue(currentScenarioAtom);
   const scenarioToCompare = useAtomValue(compareScenarioIdAtom);
   const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);

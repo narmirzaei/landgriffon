@@ -1,19 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toNumber, range } from 'lodash-es';
+import { useAtom } from 'jotai';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisFilters, setFilter, setFilters } from 'store/features/analysis/filters';
 import { useYears } from 'hooks/years';
 import Select from 'components/select';
+import { analysisFilterAtom } from 'store/atoms';
 
 import type { SelectProps } from 'components/select';
 
 const YearsFilter: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const filters = useAppSelector(analysisFilters);
-  const { layer, materials, indicator, startYear } = filters;
+  const [filters, setFilters] = useAtom(analysisFilterAtom);
+  const { materials, indicator, startYear } = filters;
   const materialsIds = useMemo(() => materials.map((mat) => mat.value), [materials]);
-  const { data, isLoading } = useYears(layer, materialsIds, indicator?.value);
+  const { data, isLoading } = useYears(materialsIds, indicator?.value);
 
   const [years, setYears] = useState(data);
 
@@ -61,19 +60,17 @@ const YearsFilter: React.FC = () => {
   const handleChange: SelectProps<number>['onChange'] = useCallback(
     (option) => {
       setSelectedOption(option);
-      dispatch(setFilter({ id: 'startYear', value: option.value }));
+      setFilters({ startYear: option.value });
     },
-    [dispatch],
+    [setFilters],
   );
 
   // Update filters when data changes
   useEffect(() => {
     if (data?.length && !isLoading) {
-      dispatch(
-        setFilters({ ...(startYear ? {} : { startYear: data[data.length - 1] }), endYear: null }),
-      );
+      setFilters({ ...(startYear ? {} : { startYear: data[data.length - 1] }), endYear: null });
     }
-  }, [dispatch, isLoading, data, startYear]);
+  }, [isLoading, data, startYear, setFilters]);
 
   return (
     <Select

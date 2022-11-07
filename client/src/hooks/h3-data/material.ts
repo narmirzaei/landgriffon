@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
+import { useAtomValue } from 'jotai';
 
 import { DEFAULT_QUERY_OPTIONS, responseParser } from './utils';
 
 import { apiRawService } from 'services/api';
-import { analysisFilters } from 'store/features/analysis';
-import { useAppSelector } from 'store/hooks';
 import { COLOR_RAMPS, useColors } from 'utils/colors';
 import { useYears } from 'hooks/years';
+import { analysisFilterAtom } from 'store/atoms';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
@@ -18,13 +18,17 @@ const useH3MaterialData = <T = H3APIResponse>(
   options: Partial<UseQueryOptions<H3APIResponse, AxiosError, T>> = {},
 ) => {
   const colors = useColors('material', COLOR_RAMPS);
-  const filters = useAppSelector(analysisFilters);
-  const { materialId, origins } = filters;
+  const { materialId, origins } = useAtomValue(analysisFilterAtom);
 
-  const { data: year } = useYears('material', [materialId], 'all', {
-    enabled: !!materialId,
-    select: (years) => years?.[years?.length - 1],
-  });
+  const { data: year } = useYears(
+    [materialId],
+    'all',
+    {
+      enabled: !!materialId,
+      select: (years) => years?.[years?.length - 1],
+    },
+    'material',
+  );
 
   const urlParams = useMemo(
     () => ({

@@ -15,7 +15,7 @@ import { ChevronDownIcon } from '@heroicons/react/solid';
 
 import Select from 'components/select';
 
-import type { SelectOption } from 'components/select/types';
+import type { Option } from 'components/forms/select/types';
 import type { YearsRangeFilterProps } from './types';
 
 export const YearsRangeFilter: React.FC<YearsRangeFilterProps> = ({
@@ -39,8 +39,8 @@ export const YearsRangeFilter: React.FC<YearsRangeFilterProps> = ({
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [startYearOptions, setStartYearOptions] = useState<SelectOption<number>[]>();
-  const [endYearOptions, setEndYearOptions] = useState<SelectOption<number>[]>();
+  const [startYearOptions, setStartYearOptions] = useState<Option<number>[]>();
+  const [endYearOptions, setEndYearOptions] = useState<Option<number>[]>();
 
   useEffect(() => {
     if (!years.length) return;

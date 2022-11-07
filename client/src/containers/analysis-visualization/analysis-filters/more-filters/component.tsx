@@ -10,33 +10,30 @@ import {
   FloatingPortal,
 } from '@floating-ui/react-dom-interactions';
 import { Popover, Transition } from '@headlessui/react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
 import Materials from '../materials/component';
 import OriginRegions from '../origin-regions/component';
 import Suppliers from '../suppliers/component';
 import LocationTypes from '../location-types/component';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisFilters, setFilters } from 'store/features/analysis/filters';
-import { setFilter } from 'store/features/analysis';
 import { useMaterialsTrees } from 'hooks/materials';
 import { useAdminRegionsTrees } from 'hooks/admin-regions';
 import { useSuppliersTrees } from 'hooks/suppliers';
 import { useLocationTypes } from 'hooks/location-types';
 import Button from 'components/button/component';
 import { flattenTree, recursiveMap, recursiveSort } from 'components/tree-select/utils';
-import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
+import { analysisFilterAtom, compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
 import useOnAtomChange from 'store/helpers/useOnAtomChange';
 
+import type { AnalysisFilters } from 'store/atoms';
 import type { TreeSelectOption } from 'components/tree-select/types';
-import type { AnalysisFiltersState } from 'store/features/analysis/filters';
 
 type MoreFiltersState = {
-  materials: AnalysisFiltersState['materials'];
-  origins: AnalysisFiltersState['origins'];
-  suppliers: AnalysisFiltersState['suppliers'];
-  locationTypes: AnalysisFiltersState['locationTypes'];
+  materials: AnalysisFilters['materials'];
+  origins: AnalysisFilters['origins'];
+  suppliers: AnalysisFilters['suppliers'];
+  locationTypes: AnalysisFilters['locationTypes'];
 };
 
 const INITIAL_FILTERS: MoreFiltersState = {
@@ -63,8 +60,8 @@ const DEFAULT_QUERY_OPTIONS = {
 const MoreFilters = () => {
   const scenarioId = useAtomValue(currentScenarioAtom);
   const compareScenarioId = useAtomValue(compareScenarioIdAtom);
-  const dispatch = useAppDispatch();
-  const { materials, origins, suppliers, locationTypes } = useAppSelector(analysisFilters);
+  const [{ materials, origins, suppliers, locationTypes }, setFilters] =
+    useAtom(analysisFilterAtom);
 
   const moreFilters: MoreFiltersState = useMemo(
     () => ({ materials, origins, suppliers, locationTypes }),
@@ -98,8 +95,8 @@ const MoreFilters = () => {
 
   // Only the changes are applied when the user clicks on Apply
   const handleApply = useCallback(() => {
-    dispatch(setFilters(selectedFilters));
-  }, [dispatch, selectedFilters]);
+    setFilters(selectedFilters);
+  }, [selectedFilters, setFilters]);
 
   // Close filters window
   const handleCancel = useCallback(() => {
@@ -209,10 +206,10 @@ const MoreFilters = () => {
       const validOptions = currentNodes.filter(({ value }) => allKeys.includes(value));
 
       if (validOptions.length !== allKeys.length) {
-        dispatch(setFilter({ id: name, value: validOptions }));
+        setFilters({ [name]: validOptions });
       }
     },
-    [dispatch],
+    [setFilters],
   );
 
   // Check current values are valid if the scenario changes

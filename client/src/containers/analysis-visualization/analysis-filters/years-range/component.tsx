@@ -1,23 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isFinite, toNumber, range } from 'lodash-es';
+import { useAtom } from 'jotai';
 
-import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { useAppSelector } from 'store/hooks';
 import { analysisUI } from 'store/features/analysis/ui';
-import { analysisFilters, setFilters } from 'store/features/analysis/filters';
 import { useYears } from 'hooks/years';
 import YearsRangeFilter, { useYearsRange } from 'containers/filters/years-range';
+import { analysisFilterAtom } from 'store/atoms';
 
 const YearsFilter: React.FC = () => {
-  const dispatch = useAppDispatch();
-
   const [years, setYears] = useState<number[]>([]);
   const { visualizationMode } = useAppSelector(analysisUI);
-  const filters = useAppSelector(analysisFilters);
-  const { layer, materials, indicator } = filters;
+  const [filters, setFilters] = useAtom(analysisFilterAtom);
+  const { materials, indicator } = filters;
 
   const materialIds = useMemo(() => materials.map((mat) => mat.value), [materials]);
 
-  const { data, isLoading } = useYears(layer, materialIds, indicator?.value);
+  const { data, isLoading } = useYears(materialIds, indicator?.value);
 
   const { startYear, endYear, yearsGap, setYearsRange } = useYearsRange({
     years,
@@ -32,8 +31,8 @@ const YearsFilter: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    dispatch(setFilters({ startYear, endYear }));
-  }, [startYear, endYear, dispatch]);
+    setFilters({ startYear, endYear });
+  }, [startYear, endYear, setFilters]);
 
   const lastYearWithData = useMemo(() => data[data.length - 1], [data]);
 

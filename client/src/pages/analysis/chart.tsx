@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import classNames from 'classnames';
 
-import { useAppSelector, useAppDispatch } from 'store/hooks';
+import { useAppDispatch } from 'store/hooks';
 import { setVisualizationMode } from 'store/features/analysis';
-import { analysisFilters } from 'store/features/analysis/filters';
 import { useIndicators } from 'hooks/indicators';
 import useEffectOnce from 'hooks/once';
 import ApplicationLayout from 'layouts/application';
@@ -12,6 +11,7 @@ import AnalysisChart from 'containers/analysis-chart';
 import AnalysisDynamicMetadata from 'containers/analysis-visualization/analysis-dynamic-metadata';
 import Loading from 'components/loading';
 import TitleTemplate from 'utils/titleTemplate';
+import { useFilterValue } from 'store/atoms';
 
 import type { ReactElement } from 'react';
 import type { NextPageWithLayout } from 'pages/_app';
@@ -19,7 +19,7 @@ import type { Indicator } from 'types';
 
 const ChartPage: NextPageWithLayout = () => {
   const dispatch = useAppDispatch();
-  const { indicator } = useAppSelector(analysisFilters);
+  const indicator = useFilterValue('indicator');
 
   // Show as many charts as there are indicators selected
   const { data, isLoading } = useIndicators();
