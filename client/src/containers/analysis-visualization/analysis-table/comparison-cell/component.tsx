@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { useCallback } from 'react';
+import { useAtomValue } from 'jotai';
 
-import { useAppSelector } from 'store/hooks';
-import { scenarios } from 'store/features/analysis/scenarios';
 import { NUMBER_FORMAT } from 'utils/number-format';
+import { comparisonModeAtom } from 'store/atoms';
 
 export interface ComparisonCellProps {
   value: number;
@@ -22,7 +22,7 @@ const ComparisonCell: React.FC<ComparisonCellProps> = ({
   unit,
   formatter = NUMBER_FORMAT,
 }) => {
-  const { comparisonMode } = useAppSelector(scenarios);
+  const comparisonMode = useAtomValue(comparisonModeAtom);
 
   const formatWithUnit = useCallback(
     (value: number, unit?: string) => {

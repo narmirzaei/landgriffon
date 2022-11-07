@@ -1,22 +1,21 @@
 import classNames from 'classnames';
+import { useAtom } from 'jotai';
 import { useCallback } from 'react';
 
-import { scenarios, setComparisonMode } from 'store/features/analysis';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { comparisonModeAtom } from 'store/atoms';
 
-import type { ScenarioComparisonMode } from 'store/features/analysis/scenarios';
+import type { ScenarioComparisonMode } from 'store/atoms';
 
 const COMMON_MODE_BUTTON_CLASSNAMES = 'border px-1 p-0.5';
 const ACTIVE_BUTTON_CLASSNAMES = 'text-navy-400 border-navy-400 bg-navy-50';
 const DISABLED_BUTTON_CLASSNAMES = 'text-gray-400 border-gray-400';
 
 export const ComparisonToggle = () => {
-  const dispatch = useAppDispatch();
-  const { comparisonMode } = useAppSelector(scenarios);
+  const [comparisonMode, setComparisonMode] = useAtom(comparisonModeAtom);
 
   const getHandleChangeComparison = useCallback(
-    (mode: ScenarioComparisonMode) => () => dispatch(setComparisonMode(mode)),
-    [dispatch],
+    (mode: ScenarioComparisonMode) => () => setComparisonMode(mode),
+    [setComparisonMode],
   );
 
   return (

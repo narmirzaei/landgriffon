@@ -7,7 +7,7 @@ import { apiRawService } from 'services/api';
 import { analysisFilters, analysisMap } from 'store/features/analysis';
 import { useAppSelector } from 'store/hooks';
 
-import type { ScenarioComparisonMode } from 'store/features/analysis/scenarios';
+import type { ScenarioComparisonMode } from 'store/atoms';
 import type { ContextualH3APIParams, ErrorResponse, H3APIResponse, H3Item, Layer } from 'types';
 import type { AxiosResponse } from 'axios';
 import type { UseQueryOptions, UseQueryResult, QueryFunction } from '@tanstack/react-query';

@@ -26,7 +26,8 @@ import { useSuppliersTrees } from 'hooks/suppliers';
 import { useLocationTypes } from 'hooks/location-types';
 import Button from 'components/button/component';
 import { flattenTree, recursiveMap, recursiveSort } from 'components/tree-select/utils';
-import { compareScenarioIdAtom, currentScenarioAtom, useOnAtomChange } from 'store/atoms';
+import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
+import useOnAtomChange from 'store/helpers/useOnAtomChange';
 
 import type { TreeSelectOption } from 'components/tree-select/types';
 import type { AnalysisFiltersState } from 'store/features/analysis/filters';

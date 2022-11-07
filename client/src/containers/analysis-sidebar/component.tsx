@@ -2,18 +2,21 @@ import { useMemo, useCallback } from 'react';
 import { XCircleIcon, PlusIcon } from '@heroicons/react/solid';
 import { RadioGroup } from '@headlessui/react';
 import Link from 'next/link';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 
-import { useAppSelector } from 'store/hooks';
 import { useInfiniteScenarios } from 'hooks/scenarios';
 import useBottomScrollListener from 'hooks/scroll';
 import ScenariosFilters from 'containers/scenarios/filters';
 import { Anchor } from 'components/button';
 import Loading from 'components/loading';
 import ScenarioItem from 'containers/scenarios/item';
-import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
-import { scenarios } from 'store/features/analysis';
+import {
+  compareScenarioIdAtom,
+  currentScenarioAtom,
+  scenarioSearchTerm,
+  scenarioSortAtom,
+} from 'store/atoms';
 
 import type { MutableRefObject } from 'react';
 import type { Scenario } from 'containers/scenarios/types';
@@ -31,7 +34,9 @@ const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement
 }) => {
   const setScenarioToCompare = useUpdateAtom(compareScenarioIdAtom);
 
-  const { sort, searchTerm } = useAppSelector(scenarios);
+  const sort = useAtomValue(scenarioSortAtom);
+  const searchTerm = useAtomValue(scenarioSearchTerm);
+
   const { fetchNextPage, hasNextPage, data, isLoading, error } = useInfiniteScenarios({
     sort: sort as string,
     'page[size]': 10,

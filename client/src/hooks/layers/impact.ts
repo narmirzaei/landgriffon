@@ -9,9 +9,13 @@ import { NUMBER_FORMAT } from 'utils/number-format';
 import { COLOR_RAMPS } from 'utils/colors';
 import useH3ImpactData from 'hooks/h3-data/impact';
 import useH3ComparisonData from 'hooks/h3-data/impact/comparison';
-import { scenarios } from 'store/features/analysis';
 import { storeToQueryParams } from 'hooks/h3-data/utils';
-import { compareScenarioIdAtom, currentScenarioAtom, isComparisonEnabledAtom } from 'store/atoms';
+import {
+  compareScenarioIdAtom,
+  comparisonModeAtom,
+  currentScenarioAtom,
+  isComparisonEnabledAtom,
+} from 'store/atoms';
 
 import type { LegendItem as LegendItemProp } from 'types';
 
@@ -25,7 +29,7 @@ export const useImpactLayer = () => {
 
   const isComparisonEnabled = useAtomValue(isComparisonEnabledAtom);
   const scenarioToCompare = useAtomValue(compareScenarioIdAtom);
-  const { comparisonMode } = useAppSelector(scenarios);
+  const comparisonMode = useAtomValue(comparisonModeAtom);
   const colorKey = scenarioToCompare ? 'compare' : 'impact';
 
   const {

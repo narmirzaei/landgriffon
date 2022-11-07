@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { uniqBy } from 'lodash-es';
+import { useAtomValue } from 'jotai';
 
-import { useAppSelector } from 'store/hooks';
-import { scenarios } from 'store/features/analysis';
 import { NUMBER_FORMAT } from 'utils/number-format';
+import { comparisonModeAtom } from 'store/atoms';
 
 type CustomTooltipProps = {
   payload: {
@@ -18,7 +18,8 @@ type CustomTooltipProps = {
 };
 
 const CustomTooltip: React.FC<CustomTooltipProps> = ({ payload }) => {
-  const { comparisonMode } = useAppSelector(scenarios);
+  const comparisonMode = useAtomValue(comparisonModeAtom);
+
   const tooltipData = uniqBy(payload, 'stroke');
   // We will assume that actual-data is the first item and the scenario is the second one
   const baseValue = tooltipData[0]?.value;
