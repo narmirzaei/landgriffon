@@ -7,7 +7,7 @@ import { DEFAULT_QUERY_OPTIONS, responseParser } from './utils';
 import { apiRawService } from 'services/api';
 import { COLOR_RAMPS, useColors } from 'utils/colors';
 import { useYears } from 'hooks/years';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';

@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 
 import Component from './component';
 
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
 
 import type { MaterialsFilterProps } from './component';
 

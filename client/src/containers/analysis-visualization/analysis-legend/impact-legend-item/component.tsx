@@ -4,8 +4,10 @@ import { useAtomValue } from 'jotai';
 import LegendTypeChoropleth from 'components/legend/types/choropleth';
 import LegendTypeComparative from 'components/legend/types/comparative';
 import LegendItem from 'components/legend/item';
-import { isComparisonEnabledAtom, useFilterValue, useLayerAtom } from 'store/atoms';
 import { useIndicator } from 'hooks/indicators';
+import { useFilterValue } from 'store/filters';
+import { useLayerAtom } from 'store/layers';
+import { isComparisonEnabledAtom } from 'store/scenarios';
 
 import type { Legend } from 'types';
 

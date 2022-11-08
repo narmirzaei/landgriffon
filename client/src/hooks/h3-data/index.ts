@@ -6,12 +6,12 @@ import useH3ImpactData from './impact';
 import useH3ContextualData from './contextual';
 import { storeToQueryParams } from './utils';
 
+import { analysisFilterAtom } from 'store/filters';
 import {
-  analysisFilterAtom,
-  compareScenarioIdAtom,
   currentScenarioAtom,
+  compareScenarioIdAtom,
   isComparisonEnabledAtom,
-} from 'store/atoms';
+} from 'store/scenarios';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type {

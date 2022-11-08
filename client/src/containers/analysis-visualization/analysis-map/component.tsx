@@ -4,8 +4,6 @@ import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import { sortBy } from 'lodash-es';
 import { useAtom, useAtomValue } from 'jotai';
 
-import { useAppSelector } from 'store/hooks';
-import { analysisMap } from 'store/features/analysis';
 import { useImpactLayer } from 'hooks/layers/impact';
 import Legend from 'containers/analysis-visualization/analysis-legend';
 import PageLoading from 'containers/page-loading';
@@ -16,7 +14,8 @@ import { NUMBER_FORMAT } from 'utils/number-format';
 import Map from 'components/map';
 import { useAllContextualLayersData } from 'hooks/h3-data/contextual';
 import useH3MaterialData from 'hooks/h3-data/material';
-import { layersAtom, viewStateAtom } from 'store/atoms';
+import { layerDeckGLPropsAtom, layersAtom } from 'store/layers';
+import { viewStateAtom } from 'store/map';
 
 import type { MapStyle } from 'components/map';
 import type { BasemapValue } from 'components/map/controls/basemap/types';
@@ -24,7 +23,7 @@ import type { H3Data } from 'types';
 
 const AnalysisMap = () => {
   const layersMetadata = useAtomValue(layersAtom);
-  const { layerDeckGLProps } = useAppSelector(analysisMap);
+  const layerDeckGLProps = useAtomValue(layerDeckGLPropsAtom);
 
   const [mapStyle, setMapStyle] = useState<MapStyle>('terrain');
   const [tooltipData, setTooltipData] = useState(null);

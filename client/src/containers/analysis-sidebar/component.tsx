@@ -13,10 +13,10 @@ import Loading from 'components/loading';
 import ScenarioItem from 'containers/scenarios/item';
 import {
   compareScenarioIdAtom,
-  currentScenarioAtom,
-  scenarioSearchTerm,
   scenarioSortAtom,
-} from 'store/atoms';
+  scenarioSearchTerm,
+  currentScenarioAtom,
+} from 'store/scenarios';
 
 import type { MutableRefObject } from 'react';
 import type { Scenario } from 'containers/scenarios/types';

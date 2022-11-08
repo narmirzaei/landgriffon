@@ -3,7 +3,7 @@ import { useUpdateAtom } from 'jotai/utils';
 
 import Component from './component';
 
-import { analysisFilterAtom, useFilterValue } from 'store/atoms';
+import { analysisFilterAtom, useFilterValue } from 'store/filters';
 
 const MaterialsFilter: React.FC<{ multiple?: boolean }> = (props) => {
   const { multiple = false } = props;

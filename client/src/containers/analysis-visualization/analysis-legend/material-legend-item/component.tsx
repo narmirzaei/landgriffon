@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useAtom } from 'jotai';
-import { useUpdateAtom } from 'jotai/utils';
 
 import LegendTypeChoropleth from 'components/legend/types/choropleth';
 import LegendItem from 'components/legend/item';
@@ -9,7 +8,8 @@ import { COLOR_RAMPS } from 'utils/colors';
 import Materials from 'containers/analysis-visualization/analysis-filters/materials/component';
 import { useMaterial } from 'hooks/materials';
 import useH3MaterialData from 'hooks/h3-data/material';
-import { analysisFilterAtom, setLayerAtom, useLayerAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
+import { useLayerAtom } from 'store/layers';
 
 import type { TreeSelectOption } from 'components/tree-select/types';
 import type { Legend, LegendItem as LegendItemsProps } from 'types';
@@ -18,9 +18,8 @@ const LAYER_ID = 'material';
 
 const MaterialLayer = () => {
   const [{ indicator, materialId }, setFilters] = useAtom(analysisFilterAtom);
-  const setLayer = useUpdateAtom(setLayerAtom);
 
-  const [layer] = useLayerAtom(LAYER_ID);
+  const [layer, setLayer] = useLayerAtom(LAYER_ID);
   const handleOpacity = useCallback(
     (opacity: number) => {
       setLayer({ id: LAYER_ID, opacity });
@@ -31,7 +30,6 @@ const MaterialLayer = () => {
   const { isFetching, isSuccess, data, isError, error } = useH3MaterialData(undefined, {
     onSuccess: (data) => {
       setLayer({
-        id: LAYER_ID,
         metadata: {
           legend: {
             id: `${LAYER_ID}-${indicator.value}`,

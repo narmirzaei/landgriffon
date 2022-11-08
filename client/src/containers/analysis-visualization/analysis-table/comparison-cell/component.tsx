@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 
 import { NUMBER_FORMAT } from 'utils/number-format';
-import { comparisonModeAtom } from 'store/atoms';
+import { comparisonModeAtom } from 'store/scenarios';
 
 export interface ComparisonCellProps {
   value: number;

@@ -6,7 +6,7 @@ import YearsRangeFilter from './years-range';
 import MoreFilters from './more-filters';
 
 import YearsFilter from 'containers/years';
-import { visualizationModeAtom } from 'store/atoms';
+import { visualizationModeAtom } from 'store/visualizationMode';
 
 const AnalysisFilters: React.FC = () => {
   const visualizationMode = useAtomValue(visualizationModeAtom);

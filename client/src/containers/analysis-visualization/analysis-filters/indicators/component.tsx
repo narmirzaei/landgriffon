@@ -4,7 +4,8 @@ import { useAtom, useAtomValue } from 'jotai';
 
 import { useIndicators } from 'hooks/indicators';
 import Select from 'components/forms/select';
-import { analysisFilterAtom, visualizationModeAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
+import { visualizationModeAtom } from 'store/visualizationMode';
 
 import type { Indicator } from 'types';
 import type { SelectOption } from 'components/select';

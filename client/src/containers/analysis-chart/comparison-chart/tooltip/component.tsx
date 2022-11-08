@@ -3,7 +3,7 @@ import { uniqBy } from 'lodash-es';
 import { useAtomValue } from 'jotai';
 
 import { NUMBER_FORMAT } from 'utils/number-format';
-import { comparisonModeAtom } from 'store/atoms';
+import { comparisonModeAtom } from 'store/scenarios';
 
 type CustomTooltipProps = {
   payload: {

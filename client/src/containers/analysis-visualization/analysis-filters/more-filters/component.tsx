@@ -23,10 +23,11 @@ import { useSuppliersTrees } from 'hooks/suppliers';
 import { useLocationTypes } from 'hooks/location-types';
 import Button from 'components/button/component';
 import { flattenTree, recursiveMap, recursiveSort } from 'components/tree-select/utils';
-import { analysisFilterAtom, compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
 import useOnAtomChange from 'store/helpers/useOnAtomChange';
+import { currentScenarioAtom, compareScenarioIdAtom } from 'store/scenarios';
 
-import type { AnalysisFilters } from 'store/atoms';
+import type { AnalysisFilters } from 'store/filters';
 import type { TreeSelectOption } from 'components/tree-select/types';
 
 type MoreFiltersState = {
@@ -68,7 +69,6 @@ const MoreFilters = () => {
     [materials, origins, suppliers, locationTypes],
   );
 
-  // Initial state from redux
   const [selectedFilters, setSelectedFilters] = useState(moreFilters);
 
   const materialIds = useMemo(

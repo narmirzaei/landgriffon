@@ -19,7 +19,7 @@ import CustomTooltip from './tooltip';
 import { useImpactComparison } from 'hooks/impact/comparison';
 import Loading from 'components/loading';
 import { NUMBER_FORMAT } from 'utils/number-format';
-import { filtersForTabularApiAtom } from 'store/atoms';
+import { filtersForTabularApiAtom } from 'store/filters';
 
 import type { Indicator } from 'types';
 import type { ImpactComparisonParams } from 'hooks/impact/comparison';

@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import ImpactChart from './impact-chart';
 import ComparisonChart from './comparison-chart';
 
-import { compareScenarioIdAtom } from 'store/atoms';
+import { compareScenarioIdAtom } from 'store/scenarios';
 
 import type { Indicator } from 'types';
 

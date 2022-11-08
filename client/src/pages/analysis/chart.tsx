@@ -8,7 +8,7 @@ import AnalysisChart from 'containers/analysis-chart';
 import AnalysisDynamicMetadata from 'containers/analysis-visualization/analysis-dynamic-metadata';
 import Loading from 'components/loading';
 import TitleTemplate from 'utils/titleTemplate';
-import { useFilterValue } from 'store/atoms';
+import { useFilterValue } from 'store/filters';
 
 import type { ReactElement } from 'react';
 import type { NextPageWithLayout } from 'pages/_app';

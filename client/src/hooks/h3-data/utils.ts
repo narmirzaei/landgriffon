@@ -1,6 +1,6 @@
 import { scaleOrdinal, scaleThreshold } from 'd3-scale';
 
-import type { AnalysisFilters } from 'store/atoms';
+import type { AnalysisFilters } from 'store/filters';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { ScaleOrdinal, ScaleThreshold } from 'd3-scale';
 import type { H3APIResponse, H3Item, Legend, RGBColor } from 'types';

@@ -19,7 +19,8 @@ import CustomTooltip from './tooltip';
 import { useImpactRanking } from 'hooks/impact/ranking';
 import Loading from 'components/loading';
 import { NUMBER_FORMAT } from 'utils/number-format';
-import { currentScenarioAtom, filtersForTabularApiAtom } from 'store/atoms';
+import { filtersForTabularApiAtom } from 'store/filters';
+import { currentScenarioAtom } from 'store/scenarios';
 
 import type { ExtendedLegendProps } from './legend/component';
 import type { Indicator } from 'types';

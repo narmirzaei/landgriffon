@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { useAtom } from 'jotai';
 
-import { isSidebarCollapsedAtom } from 'store/atoms';
+import { isSidebarCollapsedAtom } from 'store/visualizationMode';
 
 const ICON_CLASSNAMES = 'h-4 w-4 text-gray-900';
 

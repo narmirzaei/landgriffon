@@ -14,7 +14,7 @@ import { SortableItem } from 'components/sortable/component';
 import useContextualLayers from 'hooks/layers/getContextualLayers';
 import Modal from 'components/modal';
 import SandwichIcon from 'components/icons/sandwich';
-import { orderedLayersAtom, setLayerAtom } from 'store/atoms';
+import { orderedLayersAtom, setLayerAtom } from 'store/layers';
 
 import type { Layer } from 'types';
 

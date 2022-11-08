@@ -8,7 +8,7 @@ import AnalysisSidebar from 'containers/analysis-sidebar';
 import AnalysisFilters from 'containers/analysis-visualization/analysis-filters';
 import ModeControl from 'containers/mode-control';
 import TitleTemplate from 'utils/titleTemplate';
-import { isSidebarCollapsedAtom, visualizationModeAtom } from 'store/atoms';
+import { isSidebarCollapsedAtom, visualizationModeAtom } from 'store/visualizationMode';
 
 const AnalysisLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const scrollRef = useRef<HTMLDivElement>(null);

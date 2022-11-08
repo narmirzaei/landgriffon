@@ -2,9 +2,8 @@ import { useCallback, useMemo, useEffect } from 'react';
 import { useAtom } from 'jotai';
 
 import { useScenarios } from 'hooks/scenarios';
-import { useAppDispatch } from 'store/hooks';
 import Select from 'components/select';
-import { compareScenarioIdAtom, currentScenarioAtom } from 'store/atoms';
+import { compareScenarioIdAtom, currentScenarioAtom } from 'store/scenarios';
 
 import type { Dispatch, FC } from 'react';
 import type { SelectOption } from 'components/select/types';
@@ -12,8 +11,6 @@ import type { SelectOption } from 'components/select/types';
 const ScenariosComparison: FC = () => {
   const [scenarioId, setScenarioId] = useAtom(currentScenarioAtom);
   const [compareScenarioId, setCompareScenarioId] = useAtom(compareScenarioIdAtom);
-
-  const dispatch = useAppDispatch();
 
   const { data: scenarios } = useScenarios({
     params: { disablePagination: true, hasActiveInterventions: true, sort: '-updatedAt' },
@@ -44,7 +41,7 @@ const ScenariosComparison: FC = () => {
       setCompareScenarioId(null);
       setScenarioId(selected?.value || null);
     }
-  }, [selected, dispatch, options, compareScenarioId, setScenarioId, setCompareScenarioId]);
+  }, [selected, options, compareScenarioId, setScenarioId, setCompareScenarioId]);
 
   return (
     <div data-testid="comparison-select">

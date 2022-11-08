@@ -2,9 +2,9 @@ import classNames from 'classnames';
 import { useAtom } from 'jotai';
 import { useCallback } from 'react';
 
-import { comparisonModeAtom } from 'store/atoms';
+import { comparisonModeAtom } from 'store/scenarios';
 
-import type { ScenarioComparisonMode } from 'store/atoms';
+import type { ScenarioComparisonMode } from 'store/scenarios';
 
 const COMMON_MODE_BUTTON_CLASSNAMES = 'border px-1 p-0.5';
 const ACTIVE_BUTTON_CLASSNAMES = 'text-navy-400 border-navy-400 bg-navy-50';

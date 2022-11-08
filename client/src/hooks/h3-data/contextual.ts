@@ -5,9 +5,10 @@ import { useAtomValue } from 'jotai';
 import { DEFAULT_QUERY_OPTIONS, scaleByLegendType } from './utils';
 
 import { apiRawService } from 'services/api';
-import { analysisFilterAtom, layersAtom } from 'store/atoms';
+import { layersAtom } from 'store/layers';
+import { analysisFilterAtom } from 'store/filters';
 
-import type { ScenarioComparisonMode } from 'store/atoms';
+import type { ScenarioComparisonMode } from 'store/scenarios';
 import type { ContextualH3APIParams, ErrorResponse, H3APIResponse, H3Item, Layer } from 'types';
 import type { AxiosResponse } from 'axios';
 import type { UseQueryOptions, UseQueryResult, QueryFunction } from '@tanstack/react-query';

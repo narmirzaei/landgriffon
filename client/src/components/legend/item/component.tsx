@@ -7,7 +7,7 @@ import { ComparisonToggle } from './comparisonModeToggle';
 
 import InfoToolTip from 'components/info-tooltip/component';
 import Loading from 'components/loading';
-import { isComparisonEnabledAtom } from 'store/atoms';
+import { isComparisonEnabledAtom } from 'store/scenarios';
 
 import type { Dispatch } from 'react';
 

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useUpdateAtom } from 'jotai/utils';
 
 import { apiRawService } from 'services/api';
-import { setLayerAtom } from 'store/atoms';
+import { setLayerAtom } from 'store/layers';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { LayerMetadata } from 'types';

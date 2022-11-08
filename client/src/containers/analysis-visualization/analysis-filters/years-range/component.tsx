@@ -4,7 +4,8 @@ import { useAtom, useAtomValue } from 'jotai';
 
 import { useYears } from 'hooks/years';
 import YearsRangeFilter, { useYearsRange } from 'containers/filters/years-range';
-import { analysisFilterAtom, visualizationModeAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
+import { visualizationModeAtom } from 'store/visualizationMode';
 
 const YearsFilter: React.FC = () => {
   const [years, setYears] = useState<number[]>([]);

@@ -2,27 +2,23 @@ import { useEffect, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 
-import { useAppDispatch } from 'store/hooks';
-import { setLayerDeckGLProps } from 'store/features/analysis/map';
 import { NUMBER_FORMAT } from 'utils/number-format';
 import { COLOR_RAMPS } from 'utils/colors';
 import useH3ImpactData from 'hooks/h3-data/impact';
 import useH3ComparisonData from 'hooks/h3-data/impact/comparison';
 import { storeToQueryParams } from 'hooks/h3-data/utils';
+import { analysisFilterAtom } from 'store/filters';
+import { layerDeckGLPropsAtom, useLayerAtom } from 'store/layers';
 import {
-  analysisFilterAtom,
-  compareScenarioIdAtom,
-  comparisonModeAtom,
   currentScenarioAtom,
   isComparisonEnabledAtom,
-  setLayerAtom,
-  useLayerAtom,
-} from 'store/atoms';
+  compareScenarioIdAtom,
+  comparisonModeAtom,
+} from 'store/scenarios';
 
 import type { LegendItem as LegendItemProp } from 'types';
 
 export const useImpactLayer = () => {
-  const dispatch = useAppDispatch();
   const filters = useAtomValue(analysisFilterAtom);
   const scenarioId = useAtomValue(currentScenarioAtom);
 
@@ -31,7 +27,8 @@ export const useImpactLayer = () => {
   const comparisonMode = useAtomValue(comparisonModeAtom);
   const colorKey = scenarioToCompare ? 'compare' : 'impact';
 
-  const [impactLayer] = useLayerAtom('impact');
+  const [impactLayer, setImpactLayer] = useLayerAtom('impact');
+  const setLayerDeckGLProps = useUpdateAtom(layerDeckGLPropsAtom);
 
   const params = useMemo(
     () => ({
@@ -56,7 +53,6 @@ export const useImpactLayer = () => {
     },
     { enabled: isComparisonEnabled },
   );
-  const setLayer = useUpdateAtom(setLayerAtom);
 
   const query = isComparisonEnabled ? comparisonQuery : normalQuery;
 
@@ -65,8 +61,7 @@ export const useImpactLayer = () => {
   // Populating legend
   useEffect(() => {
     if (data && isSuccess && indicator) {
-      setLayer({
-        id: 'impact',
+      setImpactLayer({
         loading: query.isFetching,
         metadata: {
           legend: {
@@ -91,29 +86,23 @@ export const useImpactLayer = () => {
   }, [
     data,
     isSuccess,
-    dispatch,
     indicator,
     query.isFetching,
     year,
     isComparisonEnabled,
     colorKey,
-    setLayer,
+    setImpactLayer,
   ]);
 
   useEffect(() => {
     if (!isFetched) return;
 
-    dispatch(
-      setLayerDeckGLProps({
-        id: 'impact',
-        props: {
-          id: 'impact',
-          opacity: impactLayer.opacity,
-          visible: impactLayer.active,
-        },
-      }),
-    );
-  }, [dispatch, impactLayer.active, impactLayer.opacity, isFetched]);
+    setLayerDeckGLProps({
+      id: 'impact',
+      opacity: impactLayer.opacity,
+      visible: impactLayer.active,
+    });
+  }, [impactLayer.active, impactLayer.opacity, isFetched, setLayerDeckGLProps]);
 
   return query;
 };

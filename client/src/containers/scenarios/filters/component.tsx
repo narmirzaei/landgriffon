@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 
 import Select from 'components/forms/select';
 import Search from 'components/search';
-import { scenarioSearchTerm, scenarioSortAtom } from 'store/atoms';
+import { scenarioSearchTerm, scenarioSortAtom } from 'store/scenarios';
 
 import type { FC } from 'react';
 

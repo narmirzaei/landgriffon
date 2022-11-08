@@ -1,5 +1,5 @@
 import useH3ContextualData from 'hooks/h3-data/contextual';
-import { useLayerAtom } from 'store/atoms';
+import { useLayerAtom } from 'store/layers';
 
 import type { Layer } from 'types';
 

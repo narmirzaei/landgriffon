@@ -7,12 +7,12 @@ import { useScenario } from 'hooks/scenarios';
 import { useIndicator } from 'hooks/indicators';
 import Badge from 'components/badge/component';
 import { ComparisonToggle } from 'components/legend/item/comparisonModeToggle';
+import { analysisFilterAtom } from 'store/filters';
 import {
-  analysisFilterAtom,
-  compareScenarioIdAtom,
   currentScenarioAtom,
   isComparisonEnabledAtom,
-} from 'store/atoms';
+  compareScenarioIdAtom,
+} from 'store/scenarios';
 
 import type { SelectOption } from 'components/select';
 import type { FC } from 'react';

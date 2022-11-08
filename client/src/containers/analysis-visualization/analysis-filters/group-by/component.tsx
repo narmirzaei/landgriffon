@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useAtom } from 'jotai';
 
 import Select from 'components/forms/select';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
 
 import type { Option, SelectProps } from 'components/forms/select/types';
 import type { Group } from 'types';

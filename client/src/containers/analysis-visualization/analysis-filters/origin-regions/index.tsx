@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 
 import Component from './component';
 
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
 
 const OriginRegionsFilter: React.FC<{ multiple?: boolean }> = (props) => {
   const { multiple = false } = props;

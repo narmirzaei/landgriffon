@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useAtomValue } from 'jotai';
 
 import ButtonGroup, { LinkGroupItem } from 'components/button-group';
-import { visualizationModeAtom } from 'store/atoms';
+import { visualizationModeAtom } from 'store/visualizationMode';
 
 const MODES: string[] = ['map', 'table', 'chart'];
 

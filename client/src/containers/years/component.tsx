@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 
 import { useYears } from 'hooks/years';
 import Select from 'components/forms/select';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
 
 import type { Option, SelectProps } from 'components/forms/select/types';
 

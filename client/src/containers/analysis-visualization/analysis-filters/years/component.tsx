@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 
 import { useYears } from 'hooks/years';
 import Select from 'components/select';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
 
 import type { SelectProps } from 'components/select';
 

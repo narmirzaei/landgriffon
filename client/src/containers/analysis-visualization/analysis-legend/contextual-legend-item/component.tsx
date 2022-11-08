@@ -9,7 +9,7 @@ import LegendTypeGradient from 'components/legend/types/gradient';
 import { useContextualLayer } from 'hooks/layers/contextual';
 import useContextualLayers from 'hooks/layers/getContextualLayers';
 import { NUMBER_FORMAT } from 'utils/number-format';
-import { setLayerAtom } from 'store/atoms';
+import { setLayerAtom } from 'store/layers';
 
 import type { Layer } from 'types';
 

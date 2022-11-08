@@ -15,12 +15,12 @@ import Table from 'components/table/component';
 import LineChart from 'components/chart/line';
 import { NUMBER_FORMAT } from 'utils/number-format';
 import { DEFAULT_PAGE_SIZES } from 'components/table/pagination/constants';
+import { filtersForTabularApiAtom } from 'store/filters';
 import {
-  compareScenarioIdAtom,
   currentScenarioAtom,
-  filtersForTabularApiAtom,
   isComparisonEnabledAtom,
-} from 'store/atoms';
+  compareScenarioIdAtom,
+} from 'store/scenarios';
 
 import type { ExpandedState, PaginationState, SortingState } from '@tanstack/react-table';
 import type { TableProps } from 'components/table/component';

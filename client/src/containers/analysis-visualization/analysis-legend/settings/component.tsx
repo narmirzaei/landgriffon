@@ -17,7 +17,8 @@ import Toggle from 'components/toggle';
 import useFuse from 'hooks/fuse';
 import Loading from 'components/loading';
 import Callout from 'components/callout';
-import { analysisFilterAtom, layersAtom, setLayerAtom } from 'store/atoms';
+import { analysisFilterAtom } from 'store/filters';
+import { layersAtom, setLayerAtom } from 'store/layers';
 
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { UseFuseOptions } from 'hooks/fuse';
