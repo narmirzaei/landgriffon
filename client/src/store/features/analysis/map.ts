@@ -32,25 +32,8 @@ interface DeckGLConstructorProps {
   opacity: number;
 }
 
-type TooltipData = {
-  id: string;
-  name: string;
-  value?: number;
-  unit?: string;
-};
-
 export type AnalysisMapState = {
   layers: Record<Layer['id'], Layer>;
-  // Tooltip state
-  tooltipData: TooltipData[];
-  tooltipPosition: {
-    x: number;
-    y: number;
-    viewport?: {
-      width: number;
-      height: number;
-    };
-  };
   // Deck.gl layer props by layer id
   layerDeckGLProps: Record<Layer['id'], Partial<DeckGLConstructorProps>>;
 };
@@ -71,12 +54,6 @@ export const initialState: AnalysisMapState = {
       order: 1,
       isContextual: true,
     },
-  },
-  tooltipData: [],
-  tooltipPosition: {
-    viewport: null,
-    x: 0,
-    y: 0,
   },
   layerDeckGLProps: {},
 };
@@ -142,46 +119,10 @@ export const analysisMapSlice = createSlice({
       });
       return state;
     },
-    // Tooltip
-    setTooltipData: (state, action: PayloadAction<TooltipData>) => {
-      const exists = !!state.tooltipData.find(({ id }) => action.payload.id === id);
-      // Remove tooltip is value is undefined but not zero
-      if (exists && !action.payload.value && action.payload.value !== 0) {
-        return {
-          ...state,
-          tooltipData: state.tooltipData.filter((data) => data.id !== action.payload.id),
-        };
-      }
-
-      // If exists replace the info
-      if (exists) {
-        return {
-          ...state,
-          tooltipData: state.tooltipData.map((data) => {
-            if (data.id === action.payload.id) {
-              return { ...data, ...action.payload };
-            }
-            return data;
-          }),
-        };
-      }
-
-      // add data if doesn't exist
-      return {
-        ...state,
-        tooltipData: [...state.tooltipData, action.payload],
-      };
-    },
-
-    setTooltipPosition: (state, action: PayloadAction<AnalysisMapState['tooltipPosition']>) => ({
-      ...state,
-      tooltipPosition: action.payload,
-    }),
   },
 });
 
-export const { setLayer, setLayerDeckGLProps, setTooltipData, setTooltipPosition, setLayerOrder } =
-  analysisMapSlice.actions;
+export const { setLayer, setLayerDeckGLProps, setLayerOrder } = analysisMapSlice.actions;
 
 export const analysisMap = (state: RootState) => state['analysis/map'];
 
