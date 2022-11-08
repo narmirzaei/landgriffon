@@ -1,13 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 
-import { useAppSelector } from 'store/hooks';
-import { analysisMap, setLayer } from 'store/features/analysis/map';
 import LegendTypeChoropleth from 'components/legend/types/choropleth';
 import LegendTypeComparative from 'components/legend/types/comparative';
 import LegendItem from 'components/legend/item';
+import { isComparisonEnabledAtom, useFilterValue, useLayerAtom } from 'store/atoms';
 import { useIndicator } from 'hooks/indicators';
-import { isComparisonEnabledAtom, useFilterValue } from 'store/atoms';
 
 import type { Legend } from 'types';
 
@@ -17,13 +15,14 @@ const ImpactLayer = () => {
   const indicatorOption = useFilterValue('indicator');
   const { data: indicator } = useIndicator(indicatorOption?.value);
 
-  const {
-    layers: { [LAYER_ID]: layer },
-  } = useAppSelector(analysisMap);
+  const [layer, setLayer] = useLayerAtom(LAYER_ID);
 
-  const handleOpacity = useCallback((opacity: number) => {
-    setLayer({ id: LAYER_ID, layer: { opacity } });
-  }, []);
+  const handleOpacity = useCallback(
+    (opacity: number) => {
+      setLayer({ id: LAYER_ID, opacity });
+    },
+    [setLayer],
+  );
 
   const legendItems = useMemo<Legend['items']>(
     () =>

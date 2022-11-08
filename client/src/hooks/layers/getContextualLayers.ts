@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+import { useUpdateAtom } from 'jotai/utils';
 
 import { apiRawService } from 'services/api';
-import { setLayer } from 'store/features/analysis/map';
-import { useAppDispatch } from 'store/hooks';
+import { setLayerAtom } from 'store/atoms';
 
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { LayerMetadata } from 'types';
@@ -26,7 +26,7 @@ type LayerCategoriesApiResponse = {
 const useContextualLayers = (
   options: Omit<UseQueryOptions<LayerCategoriesApiResponse['data']>, 'select'> = {},
 ) => {
-  const dispatch = useAppDispatch();
+  const setLayer = useUpdateAtom(setLayerAtom);
   return useQuery(
     ['contextual-layers'],
     () =>
@@ -45,13 +45,12 @@ const useContextualLayers = (
 
         const allLayers = data.flatMap((data) => data.layers);
         allLayers.forEach((layer, i) => {
-          dispatch(
-            setLayer({
-              id: layer.id,
-              // TODO: don't hardcode this
-              layer: { ...layer, isContextual: true, order: i + 2 },
-            }),
-          );
+          setLayer({
+            id: layer.id,
+            isContextual: true,
+            // TODO: don't hardcode this
+            order: i + 2,
+          });
         });
       },
     },

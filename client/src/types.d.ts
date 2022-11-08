@@ -321,7 +321,7 @@ export type Target = {
 export type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 
-export type WithRequiredProperty<Type, Key extends keyof Type> = Type &
+export type WithRequiredProperty<Type, Key extends keyof Type> = Omit<Type, Key> &
   {
     [Property in Key]-?: Type[Property];
   };

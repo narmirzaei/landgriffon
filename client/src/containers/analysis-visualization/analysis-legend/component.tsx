@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import { useAtomValue } from 'jotai';
+import { useUpdateAtom } from 'jotai/utils';
 
 import ContextualLegendItem from './contextual-legend-item';
 import ImpactLayer from './impact-legend-item';
@@ -9,54 +11,43 @@ import MaterialLayer from './material-legend-item';
 
 import Sortable from 'components/sortable';
 import { SortableItem } from 'components/sortable/component';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { analysisMap, setLayer } from 'store/features/analysis/map';
 import useContextualLayers from 'hooks/layers/getContextualLayers';
 import Modal from 'components/modal';
 import SandwichIcon from 'components/icons/sandwich';
+import { orderedLayersAtom, setLayerAtom } from 'store/atoms';
 
 import type { Layer } from 'types';
-
-const sortByOrder: (layers: Record<string, Layer>) => Layer[] = (layers) => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return Object.values(layers).sort((a, b) => a.order! - b.order!);
-};
 
 export const Legend: React.FC = () => {
   const [showLegend, setShowLegend] = useState<boolean>(true);
   const [showSettings, setShowSettings] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
+  const setLayer = useUpdateAtom(setLayerAtom);
+  const orderedLayers = useAtomValue(orderedLayersAtom);
 
-  const { layers } = useAppSelector(analysisMap);
   const nonContextualLayersNumber = useMemo(
-    () => Object.values(layers).filter((layer) => !layer.isContextual).length,
-    [layers],
+    () => orderedLayers.filter((layer) => !layer.isContextual).length,
+    [orderedLayers],
+  );
+  const activeLayerNumber = useMemo(
+    () => Object.values(orderedLayers).filter((l) => l.active).length,
+    [orderedLayers],
+  );
+  const activeContextualLayers = useMemo(
+    () =>
+      activeLayerNumber -
+      Object.values(orderedLayers).filter((l) => !l.isContextual && l.active).length,
+    [activeLayerNumber, orderedLayers],
   );
 
   const { data: layersByCategory, isSuccess: areContextualLayersLoaded } = useContextualLayers({
     onSuccess: (data) => {
       const allLayers = data.flatMap((data) => data.layers);
       allLayers.forEach((layer, i) => {
-        dispatch(
-          setLayer({
-            id: layer.id,
-            layer: { ...layer, isContextual: true, order: i + nonContextualLayersNumber },
-          }),
-        );
+        setLayer({ ...layer, isContextual: true, order: i + nonContextualLayersNumber });
       });
     },
   });
-
-  const activeLayerNumber = useMemo(
-    () => Object.values(layers).filter((l) => l.active).length,
-    [layers],
-  );
-  const activeContextualLayers = useMemo(
-    () =>
-      activeLayerNumber - Object.values(layers).filter((l) => !l.isContextual && l.active).length,
-    [activeLayerNumber, layers],
-  );
 
   const handleShowLegend = useCallback(() => {
     setShowLegend((show) => !show);
@@ -67,10 +58,6 @@ export const Legend: React.FC = () => {
   }, []);
 
   const dismissLegendSettings = useCallback(() => setShowSettings(false), []);
-
-  const orderedLayers = useMemo(() => {
-    return sortByOrder(layers);
-  }, [layers]);
 
   const LegendToShow = useCallback(
     (layer: Layer) =>
@@ -90,7 +77,7 @@ export const Legend: React.FC = () => {
         items={orderedLayers.map((layer) => layer.id)}
         onChangeOrder={(orderedIds) => {
           orderedIds.forEach((id, i) => {
-            dispatch(setLayer({ id, layer: { order: i } }));
+            setLayer({ id, order: i });
           });
         }}
       >
@@ -105,7 +92,7 @@ export const Legend: React.FC = () => {
         ))}
       </Sortable>
     ),
-    [LegendToShow, dispatch, orderedLayers],
+    [LegendToShow, orderedLayers, setLayer],
   );
 
   return (

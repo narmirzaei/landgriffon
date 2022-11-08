@@ -5,9 +5,7 @@ import { useAtomValue } from 'jotai';
 import { DEFAULT_QUERY_OPTIONS, scaleByLegendType } from './utils';
 
 import { apiRawService } from 'services/api';
-import { analysisMap } from 'store/features/analysis';
-import { useAppSelector } from 'store/hooks';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom, layersAtom } from 'store/atoms';
 
 import type { ScenarioComparisonMode } from 'store/atoms';
 import type { ContextualH3APIParams, ErrorResponse, H3APIResponse, H3Item, Layer } from 'types';
@@ -100,7 +98,7 @@ export const useAllContextualLayersData = <T = { layerId: Layer['id'] } & H3APIR
     'context' | 'queryKey' | 'queryFn'
   >,
 ) => {
-  const { layers } = useAppSelector(analysisMap);
+  const layers = useAtomValue(layersAtom);
 
   const { startYear, materials, indicator, suppliers, origins, locationTypes } =
     useAtomValue(analysisFilterAtom);

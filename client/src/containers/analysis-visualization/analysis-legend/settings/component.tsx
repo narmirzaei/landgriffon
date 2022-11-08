@@ -1,7 +1,9 @@
 import classNames from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
 import { EyeIcon } from '@heroicons/react/solid';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
+import omit from 'lodash/omit';
+import { useUpdateAtom } from 'jotai/utils';
 
 import PreviewMap from './previewMap';
 import MaterialSettings from './materialSettings';
@@ -13,11 +15,9 @@ import InfoToolTip from 'components/info-tooltip';
 import Search from 'components/search';
 import Toggle from 'components/toggle';
 import useFuse from 'hooks/fuse';
-import { analysisMap, setLayer } from 'store/features/analysis';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Loading from 'components/loading';
 import Callout from 'components/callout';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom, layersAtom, setLayerAtom } from 'store/atoms';
 
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { UseFuseOptions } from 'hooks/fuse';
@@ -161,11 +161,10 @@ const FUSE_OPTIONS: UseFuseOptions<CategoryWithLayers['layers'][number]> = {
 const LegendSettings = ({ categories = [], onApply, onDismiss }: LegendSettingsProps) => {
   const [{ materialId }, setFilters] = useAtom(analysisFilterAtom);
 
-  const {
-    layers: { impact, ..._initialLayerState },
-  } = useAppSelector(analysisMap);
+  const layers = useAtomValue(layersAtom);
+  const setLayer = useUpdateAtom(setLayerAtom);
 
-  const [localLayerState, setLocalLayerState] = useState(_initialLayerState);
+  const [localLayerState, setLocalLayerState] = useState(() => omit(layers, 'impact'));
   const [localMaterial, setLocalMaterial] = useState(materialId);
   const [selectedLayerForPreview, setSelectedLayerForPreview] = useState<Layer['id'] | null>(null);
 
@@ -186,21 +185,15 @@ const LegendSettings = ({ categories = [], onApply, onDismiss }: LegendSettingsP
     [],
   );
 
-  const dispatch = useAppDispatch();
   const handleApply = useCallback(() => {
     Object.values(localLayerState).forEach((layer) => {
-      dispatch(
-        setLayer({
-          id: layer.id,
-          layer,
-        }),
-      );
+      setLayer(layer);
     });
 
     setFilters({ materialId: localMaterial });
 
     onApply?.(Object.values(localLayerState));
-  }, [dispatch, localLayerState, localMaterial, onApply, setFilters]);
+  }, [localLayerState, localMaterial, onApply, setFilters, setLayer]);
 
   const flatLayers = useMemo(() => categories.flatMap(({ layers }) => layers), [categories]);
 

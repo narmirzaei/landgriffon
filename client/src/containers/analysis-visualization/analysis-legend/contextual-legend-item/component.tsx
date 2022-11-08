@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
+import { useUpdateAtom } from 'jotai/utils';
 
-import { useAppDispatch } from 'store/hooks';
-import { setLayer } from 'store/features/analysis/map';
-import { NUMBER_FORMAT } from 'utils/number-format';
 import LegendItem from 'components/legend/item';
 import LegendTypeBasic from 'components/legend/types/basic';
 import LegendTypeCategorical from 'components/legend/types/categorical';
@@ -10,6 +8,8 @@ import LegendTypeChoropleth from 'components/legend/types/choropleth';
 import LegendTypeGradient from 'components/legend/types/gradient';
 import { useContextualLayer } from 'hooks/layers/contextual';
 import useContextualLayers from 'hooks/layers/getContextualLayers';
+import { NUMBER_FORMAT } from 'utils/number-format';
+import { setLayerAtom } from 'store/atoms';
 
 import type { Layer } from 'types';
 
@@ -18,17 +18,16 @@ interface ContextualLegendItemProps {
 }
 
 const ContextualLegendItem = ({ layer }: ContextualLegendItemProps) => {
-  const dispatch = useAppDispatch();
-
   const { isFetching: areLayersLoading } = useContextualLayers();
   const { isLoading: isLoadingData } = useContextualLayer(layer.id);
+  const setLayer = useUpdateAtom(setLayerAtom);
 
   const handleOpacity = useCallback(
     (opacity: number) => {
       if (opacity === layer.opacity) return;
-      dispatch(setLayer({ id: layer.id, layer: { opacity } }));
+      setLayer({ id: layer.id, opacity });
     },
-    [dispatch, layer],
+    [layer.id, layer.opacity, setLayer],
   );
 
   const Legend = useMemo(() => {
