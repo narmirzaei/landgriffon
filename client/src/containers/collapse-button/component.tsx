@@ -1,18 +1,17 @@
 import { useCallback } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
+import { useAtom } from 'jotai';
 
-import { useAppSelector, useAppDispatch } from 'store/hooks';
-import { analysisUI, setSidebarCollapsed } from 'store/features/analysis/ui';
+import { isSidebarCollapsedAtom } from 'store/atoms';
 
 const ICON_CLASSNAMES = 'h-4 w-4 text-gray-900';
 
 const CollapseButton: React.FC = () => {
-  const { isSidebarCollapsed } = useAppSelector(analysisUI);
-  const dispatch = useAppDispatch();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useAtom(isSidebarCollapsedAtom);
 
   const handleClick = useCallback(() => {
-    dispatch(setSidebarCollapsed(!isSidebarCollapsed));
-  }, [dispatch, isSidebarCollapsed]);
+    setIsSidebarCollapsed((collapsed) => !collapsed);
+  }, [setIsSidebarCollapsed]);
 
   return (
     <button

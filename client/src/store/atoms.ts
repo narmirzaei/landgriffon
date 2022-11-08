@@ -83,5 +83,6 @@ export const filtersForTabularApiAtom = atom((get) => {
     originIds: origins?.map(({ value }) => value),
     locationTypes: locationTypes?.map(({ value }) => value),
   };
-
 });
+
+export const isSidebarCollapsedAtom = atom(false);

@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
+import { useAtomValue } from 'jotai';
 
 import { useAppSelector } from 'store/hooks';
 import { analysisUI } from 'store/features/analysis/ui';
@@ -9,10 +10,13 @@ import AnalysisSidebar from 'containers/analysis-sidebar';
 import AnalysisFilters from 'containers/analysis-visualization/analysis-filters';
 import ModeControl from 'containers/mode-control';
 import TitleTemplate from 'utils/titleTemplate';
+import { isSidebarCollapsedAtom } from 'store/atoms';
 
 const AnalysisLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { visualizationMode, isSidebarCollapsed } = useAppSelector(analysisUI);
+  const isSidebarCollapsed = useAtomValue(isSidebarCollapsedAtom);
+
+  const { visualizationMode } = useAppSelector(analysisUI);
 
   return (
     <div className="flex w-full h-full">
