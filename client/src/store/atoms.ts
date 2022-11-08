@@ -86,3 +86,4 @@ export const filtersForTabularApiAtom = atom((get) => {
 });
 
 export const isSidebarCollapsedAtom = atom(false);
+export const visualizationModeAtom = atom<'map' | 'table' | 'chart'>('map');

@@ -1,14 +1,15 @@
+import { useAtomValue } from 'jotai';
+
 import IndicatorsFilter from './indicators';
 import GroupByFilter from './group-by';
 import YearsRangeFilter from './years-range';
 import MoreFilters from './more-filters';
 
 import YearsFilter from 'containers/years';
-import { analysisUI } from 'store/features/analysis/ui';
-import { useAppSelector } from 'store/hooks';
+import { visualizationModeAtom } from 'store/atoms';
 
 const AnalysisFilters: React.FC = () => {
-  const { visualizationMode } = useAppSelector(analysisUI);
+  const visualizationMode = useAtomValue(visualizationModeAtom);
 
   return (
     <div className="inline-flex flex-wrap gap-2">

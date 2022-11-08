@@ -1,14 +1,14 @@
 import { ChartPieIcon, MapIcon, TableIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
+import { useAtomValue } from 'jotai';
 
-import { useAppSelector } from 'store/hooks';
-import { analysisUI } from 'store/features/analysis/ui';
 import ButtonGroup, { LinkGroupItem } from 'components/button-group';
+import { visualizationModeAtom } from 'store/atoms';
 
 const MODES: string[] = ['map', 'table', 'chart'];
 
 const ModeControl: React.FC = () => {
-  const { visualizationMode } = useAppSelector(analysisUI);
+  const visualizationMode = useAtomValue(visualizationModeAtom);
   const { query } = useRouter();
 
   return (

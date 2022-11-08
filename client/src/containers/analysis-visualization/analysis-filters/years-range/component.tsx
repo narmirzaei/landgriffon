@@ -1,16 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isFinite, toNumber, range } from 'lodash-es';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
-import { useAppSelector } from 'store/hooks';
-import { analysisUI } from 'store/features/analysis/ui';
 import { useYears } from 'hooks/years';
 import YearsRangeFilter, { useYearsRange } from 'containers/filters/years-range';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom, visualizationModeAtom } from 'store/atoms';
 
 const YearsFilter: React.FC = () => {
   const [years, setYears] = useState<number[]>([]);
-  const { visualizationMode } = useAppSelector(analysisUI);
+  const visualizationMode = useAtomValue(visualizationModeAtom);
   const [filters, setFilters] = useAtom(analysisFilterAtom);
   const { materials, indicator } = filters;
 

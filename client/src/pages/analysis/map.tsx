@@ -1,19 +1,20 @@
+import { useUpdateAtom } from 'jotai/utils';
+
 import useEffectOnce from 'hooks/once';
-import { setVisualizationMode } from 'store/features/analysis';
-import { useAppDispatch } from 'store/hooks';
 import ApplicationLayout from 'layouts/application';
 import AnalysisLayout from 'layouts/analysis';
 import AnalysisMap from 'containers/analysis-visualization/analysis-map';
 import TitleTemplate from 'utils/titleTemplate';
+import { visualizationModeAtom } from 'store/atoms';
 
 import type { NextPageWithLayout } from 'pages/_app';
 import type { ReactElement } from 'react';
 
 const MapPage: NextPageWithLayout = () => {
-  const dispatch = useAppDispatch();
+  const setVisualizationMode = useUpdateAtom(visualizationModeAtom);
 
   useEffectOnce(() => {
-    dispatch(setVisualizationMode('map'));
+    setVisualizationMode('map');
   });
 
   return (

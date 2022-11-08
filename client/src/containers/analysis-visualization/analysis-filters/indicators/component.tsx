@@ -1,12 +1,10 @@
 import { useCallback, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
-import { useAppSelector } from 'store/hooks';
-import { analysisUI } from 'store/features/analysis/ui';
 import { useIndicators } from 'hooks/indicators';
 import Select from 'components/forms/select';
-import { analysisFilterAtom } from 'store/atoms';
+import { analysisFilterAtom, visualizationModeAtom } from 'store/atoms';
 
 import type { Indicator } from 'types';
 import type { SelectOption } from 'components/select';
@@ -22,7 +20,7 @@ const IndicatorsFilter = () => {
   const ref = useRef(null);
   const { query = {}, replace } = useRouter();
   const { indicator } = query;
-  const { visualizationMode } = useAppSelector(analysisUI);
+  const visualizationMode = useAtomValue(visualizationModeAtom);
   const [filters, setFilters] = useAtom(analysisFilterAtom);
 
   const {

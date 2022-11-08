@@ -1,14 +1,12 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
 import ui from 'store/features/ui';
-import analysisUI from 'store/features/analysis/ui';
 import analysisMap from 'store/features/analysis/map';
 
 import type { ReducersMapObject } from '@reduxjs/toolkit';
 
 const staticReducers = {
   ui,
-  'analysis/ui': analysisUI,
   'analysis/map': analysisMap,
 };
 
