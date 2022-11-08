@@ -1,5 +1,4 @@
-import { atomWithStorage } from 'jotai/utils';
-import { NO_STORAGE_VALUE } from 'jotai/utils/atomWithStorage';
+import { atomWithStorage, unstable_NO_STORAGE_VALUE as NO_STORAGE_VALUE } from 'jotai/utils';
 import Router from 'next/router';
 
 import type { Dispatch } from 'react';

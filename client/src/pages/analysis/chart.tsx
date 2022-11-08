@@ -1,16 +1,14 @@
 import { useMemo } from 'react';
 import classNames from 'classnames';
-import { useUpdateAtom } from 'jotai/utils';
 
 import { useIndicators } from 'hooks/indicators';
-import useEffectOnce from 'hooks/once';
 import ApplicationLayout from 'layouts/application';
 import AnalysisLayout from 'layouts/analysis';
 import AnalysisChart from 'containers/analysis-chart';
 import AnalysisDynamicMetadata from 'containers/analysis-visualization/analysis-dynamic-metadata';
 import Loading from 'components/loading';
 import TitleTemplate from 'utils/titleTemplate';
-import { useFilterValue, visualizationModeAtom } from 'store/atoms';
+import { useFilterValue } from 'store/atoms';
 
 import type { ReactElement } from 'react';
 import type { NextPageWithLayout } from 'pages/_app';
@@ -18,7 +16,6 @@ import type { Indicator } from 'types';
 
 const ChartPage: NextPageWithLayout = () => {
   const indicator = useFilterValue('indicator');
-  const setVisualizationMode = useUpdateAtom(visualizationModeAtom);
   // Show as many charts as there are indicators selected
   const { data, isLoading } = useIndicators();
 
@@ -29,10 +26,6 @@ const ChartPage: NextPageWithLayout = () => {
     }
     return [];
   }, [data, indicator]);
-
-  useEffectOnce(() => {
-    setVisualizationMode('chart');
-  });
 
   return (
     <div className="pl-6 pr-6 my-6 xl:pl-12">
