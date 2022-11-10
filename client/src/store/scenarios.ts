@@ -16,8 +16,7 @@ export const scenarioSearchTerm = atom<string>('');
 export const scenarioSortAtom = atom<'-updatedAt' | 'title'>('-updatedAt');
 
 export const isComparisonEnabledAtom = atom((get) => {
-  const scenarioId = get(currentScenarioAtom);
   const scenarioCompId = get(compareScenarioIdAtom);
 
-  return !!scenarioId && !!scenarioCompId;
+  return !!scenarioCompId;
 });
