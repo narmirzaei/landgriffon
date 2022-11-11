@@ -1,5 +1,6 @@
 import { atom, useAtomValue } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
+import sortBy from 'lodash/sortBy';
 import { useCallback } from 'react';
 
 import type { Layer, WithRequiredProperty } from 'types';
@@ -54,7 +55,10 @@ export const setLayerAtom = atom<never, UpdateLayerPayload>(null, (get, set, upd
 });
 
 export const orderedLayersAtom = atom<Layer[], Layer[]>(
-  (get) => Object.values(get(layersAtom)),
+  (get) => {
+    const items = Object.values(get(layersAtom));
+    return sortBy(items, 'order');
+  },
   (_get, set, payload) => {
     payload.forEach((layer) => {
       set(setLayerAtom, layer);
