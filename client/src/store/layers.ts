@@ -1,6 +1,6 @@
 import { atom, useAtomValue } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'lodash-es';
 import { useCallback } from 'react';
 
 import type { Layer, WithRequiredProperty } from 'types';

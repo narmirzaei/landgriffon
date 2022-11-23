@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
 import { EyeIcon } from '@heroicons/react/solid';
 import { useAtom, useAtomValue } from 'jotai';
-import omit from 'lodash/omit';
+import { omit } from 'lodash-es';
 import { useUpdateAtom } from 'jotai/utils';
 
 import PreviewMap from './previewMap';
