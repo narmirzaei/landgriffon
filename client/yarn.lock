@@ -14905,37 +14905,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai@npm:1.9.1":
-  version: 1.9.1
-  resolution: "jotai@npm:1.9.1"
+"jotai@npm:1.11.2":
+  version: 1.11.2
+  resolution: "jotai@npm:1.11.2"
   peerDependencies:
     "@babel/core": "*"
     "@babel/template": "*"
-    immer: "*"
+    jotai-immer: "*"
+    jotai-optics: "*"
+    jotai-redux: "*"
     jotai-tanstack-query: "*"
     jotai-urql: "*"
-    optics-ts: "*"
+    jotai-valtio: "*"
+    jotai-xstate: "*"
+    jotai-zustand: "*"
     react: ">=16.8"
-    valtio: "*"
-    xstate: "*"
   peerDependenciesMeta:
     "@babel/core":
       optional: true
     "@babel/template":
       optional: true
-    immer:
+    jotai-immer:
+      optional: true
+    jotai-optics:
+      optional: true
+    jotai-redux:
       optional: true
     jotai-tanstack-query:
       optional: true
     jotai-urql:
       optional: true
-    optics-ts:
+    jotai-valtio:
       optional: true
-    valtio:
+    jotai-xstate:
       optional: true
-    xstate:
+    jotai-zustand:
       optional: true
-  checksum: 5923e252b8b0e7c102a9a5c7cad137b412bbef51d9deb54fff9ab466d391853c04b1f1609eedad4a9eba635fd84177758454328b818b67b976a47989b11f763a
+  checksum: 3cdd7cf31ddf3e63ef2f168555cca7ecd5e84b8699eb3ceb0f2fc6eef9a695a21df81274627076c8978c9e773437bc24e93eaa012ab8de0c66dc1942cf5113bb
   languageName: node
   linkType: hard
 
@@ -15305,7 +15311,7 @@ __metadata:
     framer-motion: 7.2.0
     fuse.js: 6.4.6
     istanbul-reports: 3.0.0
-    jotai: 1.9.1
+    jotai: 1.11.2
     jsona: 1.9.2
     lodash-es: 4.17.21
     lottie-react: 2.2.1
