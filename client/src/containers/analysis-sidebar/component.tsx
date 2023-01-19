@@ -37,9 +37,6 @@ const ScenariosComponent: React.FC<{ scrollref?: MutableRefObject<HTMLDivElement
 }) => {
   const { query, push } = useRouter();
   const { scenarioId = ACTUAL_DATA.id } = query;
-  const { hasPermissions } = usePermissions();
-
-  const canCreateScenario = hasPermissions(Permission.CAN_CREATE_SCENARIO);
 
   const { hasPermission } = usePermissions();
   const canCreateScenario = hasPermission(Permission.CAN_CREATE_SCENARIO);
