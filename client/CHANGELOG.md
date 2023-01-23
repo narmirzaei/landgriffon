@@ -16,14 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Disable the filter in the manage data page [LANDGRIF-1110](https://vizzuality.atlassian.net/browse/LANDGRIF-1110)
 - Disable action buttons in the targets page [LANDGRIF-1109](https://vizzuality.atlassian.net/browse/LANDGRIF-1109)
+
 ### Added
 
 - Added a end year field in the intervention form [LANDGRIF-1113](https://vizzuality.atlassian.net/browse/LANDGRIF-1113)
 - Added a volume field in the intervention form [LANDGRIF-1112](https://vizzuality.atlassian.net/browse/LANDGRIF-1112)
+- New hook to check user role and permissions [LANDGRIF-1123](https://vizzuality.atlassian.net/browse/LANDGRIF-1123)
 
 ### Fixed
 
 - Profile page requires to be logged
+
 
 ## [v0.3.5]
 
@@ -34,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Styles of the opacity control were not applied correctly
 
 ### Added
-
-- New hook to check user role and permissions [LANDGRIF-1123](https://vizzuality.atlassian.net/browse/LANDGRIF-1123)
 
 ## [v0.3.4]
 
