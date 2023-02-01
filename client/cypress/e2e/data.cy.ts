@@ -9,6 +9,7 @@ const disabledLinks = Object.values(ADMIN_TABS).filter(
 describe('Data page', () => {
   beforeEach(() => {
     cy.login();
+    cy.intercept('api/v1/users/me', { fixture: 'profiles/admin' }).as('profile');
     cy.visit('/data');
   });
 
@@ -25,5 +26,17 @@ describe('Data page', () => {
     cy.get('input[data-testid="data-search-input"]')
       .should('be.disabled')
       .should('have.class', 'bg-gray-300/20');
+  });
+
+  it('admin should be able to upload data source', () => {
+    cy.wait('@profile');
+    cy.get('[data-testid="upload-data-source-btn"]').click();
+    cy.get('[data-testid="upload-data-source-modal"]').should('be.visible');
+  });
+
+  it('user (not admin) should not be able to upload data source', () => {
+    cy.intercept('api/v1/users/me', { fixture: 'profiles/all-permissions' }).as('profile');
+    cy.wait('@profile');
+    cy.get('[data-testid="upload-data-source-btn"]').should('be.disabled');
   });
 });

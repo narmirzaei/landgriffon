@@ -4,6 +4,8 @@ import classNames from 'classnames';
 
 import { useUploadDataSource } from 'hooks/sourcing-data';
 import FileDropzone from 'components/file-dropzone';
+import { usePermissions } from 'hooks/permissions';
+import { RoleName } from 'hooks/permissions/enums';
 
 import type { FileDropZoneProps } from 'components/file-dropzone/types';
 
@@ -27,6 +29,8 @@ const DataUploader: React.FC<DataUploaderProps> = ({
   isProcessing = false,
 }) => {
   const uploadDataSource = useUploadDataSource();
+  const { hasRole } = usePermissions();
+  const canUploadDataSource = hasRole(RoleName.ADMIN);
 
   const handleOnDrop: FileDropZoneProps['onDrop'] = useCallback(
     (acceptedFiles) => {
@@ -68,7 +72,7 @@ const DataUploader: React.FC<DataUploaderProps> = ({
           {...uploadOptions}
           onDrop={handleOnDrop}
           onDropRejected={handleFileRejected}
-          disabled={isUploadingOrProcessing}
+          disabled={isUploadingOrProcessing || !canUploadDataSource}
           isUploading={isUploadingOrProcessing}
         />
       </div>
