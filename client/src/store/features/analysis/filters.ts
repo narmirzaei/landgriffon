@@ -19,6 +19,7 @@ export type AnalysisFiltersState = {
   locationTypes: Option<LocationTypes>[];
   // used for the material layer
   materialId: Material['id'];
+  resolution?: number;
 };
 
 // Define the initial state using that type

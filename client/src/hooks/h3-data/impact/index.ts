@@ -16,7 +16,7 @@ const useH3ImpactData = <T = H3ImpactResponse>(
   const colors = useColors('impact', COLOR_RAMPS);
 
   const isEnable = (options.enabled ?? true) && !!(params.indicatorId && params.year);
-
+  console.log(params);
   const query = useQuery(
     ['h3-data-impact', params],
     () =>

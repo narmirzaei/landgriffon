@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { XCircleIcon } from '@heroicons/react/solid';
 import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import { sortBy } from 'lodash-es';
 
-import { useAppSelector } from 'store/hooks';
-import { analysisMap } from 'store/features/analysis';
+import { useAppSelector, useAppDispatch } from 'store/hooks';
+import { analysisFilters, analysisMap, setFilter } from 'store/features/analysis';
 import { useImpactLayer } from 'hooks/layers/impact';
 import Legend from 'containers/analysis-visualization/analysis-legend';
 import PageLoading from 'containers/page-loading';
@@ -22,10 +22,20 @@ import type { H3Data } from 'types';
 
 const AnalysisMap = () => {
   const { layerDeckGLProps, layers: layersMetadata } = useAppSelector(analysisMap);
+  const { locationTypes } = useAppSelector(analysisFilters);
+  const dispatch = useAppDispatch();
 
   const [mapStyle, setMapStyle] = useState<MapStyle>('terrain');
   const [tooltipData, setTooltipData] = useState(null);
+  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
+  useEffect(() => {
+    const { zoom } = viewState;
+    console.log({ zoom });
+    if (locationTypes.length && zoom >= 5) {
+      dispatch(setFilter({ id: 'resolution', value: zoom > 7 ? 6 : 5 }));
+    }
+  }, [dispatch, locationTypes.length, viewState]);
   // Loading layers
   const {
     isError,
@@ -88,8 +98,6 @@ const AnalysisMap = () => {
   const handleMapStyleChange = useCallback((newStyle: BasemapValue) => {
     setMapStyle(newStyle);
   }, []);
-
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
   return (
     <div className="absolute top-0 left-0 w-full h-full overflow-hidden" data-testid="analysis-map">

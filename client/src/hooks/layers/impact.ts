@@ -28,6 +28,8 @@ export const useImpactLayer = () => {
     layers: { impact: impactLayer },
   } = useAppSelector(analysisMap);
 
+  console.log('useImpactLayer', filters.resolution);
+
   const params = useMemo(
     () =>
       storeToQueryParams({
