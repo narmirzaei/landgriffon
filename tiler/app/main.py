@@ -23,8 +23,8 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"],
                    allow_headers=["*"], )
 
 # single COG tiler. One file can have multiple bands
-cog = TilerFactory(router_prefix=titiler_router_prefix, path_dependency=s3_presigned_access)
-app.include_router(cog.router, tags=["Cloud Optimized GeoTIFF"], prefix=titiler_prefix)
+cog = TilerFactory(router_prefix="/cog", path_dependency=s3_presigned_access)
+app.include_router(cog.router, tags=["Cloud Optimized GeoTIFF"], prefix="/cog")
 add_exception_handlers(app, DEFAULT_STATUS_CODES)
 
 
