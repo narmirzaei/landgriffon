@@ -1,6 +1,7 @@
 import { StaticMap } from 'react-map-gl';
 import DeckGL from '@deck.gl/react/typed';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import DefaultMapStyle from './styles/map-style.json';
 import SatelliteMapStyle from './styles/map-style-satellite.json';
@@ -71,15 +72,32 @@ const Map = React.forwardRef<DeckGLRef, MapProps>(
       ...viewState,
     }));
 
+    /** Debounce map view state to avoid map errors on layers fetched by zoom level */
+    const debouncedViewStateChange = useDebouncedCallback(
+      (_viewState: Parameters<MapProps['onViewStateChange']>[0]) => {
+        onViewStateChange?.(_viewState);
+      },
+      50,
+    );
+
+    const handleMapMove = useCallback(
+      (_viewState: Parameters<MapProps['onViewStateChange']>[0]) => {
+        if (_viewState.viewState.zoom !== localViewState.zoom) {
+          debouncedViewStateChange(_viewState);
+        } else {
+          onViewStateChange?.(_viewState);
+        }
+        setLocalViewState(_viewState.viewState);
+      },
+      [debouncedViewStateChange, localViewState.zoom, onViewStateChange],
+    );
+
     return (
       <DeckGL
         ref={ref}
         initialViewState={viewState ? undefined : initialViewState}
         viewState={viewState}
-        onViewStateChange={(state: Parameters<MapProps['onViewStateChange']>[0]) => {
-          setLocalViewState(state.viewState);
-          onViewStateChange?.(state);
-        }}
+        onViewStateChange={handleMapMove}
         controller
         {...props}
       >

@@ -4,7 +4,7 @@ import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import { sortBy } from 'lodash-es';
 
 import { useAppSelector } from 'store/hooks';
-import { analysisMap } from 'store/features/analysis';
+import { analysisFilters, analysisMap } from 'store/features/analysis';
 import { useImpactLayer } from 'hooks/layers/impact';
 import Legend from 'containers/analysis-visualization/analysis-legend';
 import PageLoading from 'containers/page-loading';
@@ -22,16 +22,30 @@ import type { H3Data } from 'types';
 
 const AnalysisMap = () => {
   const { layerDeckGLProps, layers: layersMetadata } = useAppSelector(analysisMap);
+  const { origins } = useAppSelector(analysisFilters);
 
   const [mapStyle, setMapStyle] = useState<MapStyle>('terrain');
   const [tooltipData, setTooltipData] = useState(null);
+
+  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
+  const zoom = useMemo(() => Math.round(viewState.zoom), [viewState]);
+
+  // In zoom less than 5 renders resolution 4,
+  // In zoom between 5 to 7 renders resolution 5,
+  // In zoom greater than 7 renders resolution 6
+  const impactLayerResolution = useMemo(() => {
+    if (origins.length && zoom >= 5) {
+      return zoom > 7 ? 6 : 5;
+    }
+    return 4;
+  }, [origins.length, zoom]);
 
   // Loading layers
   const {
     isError,
     isFetching,
     data: { data: impactData },
-  } = useImpactLayer();
+  } = useImpactLayer(impactLayerResolution);
 
   const { data: materialData } = useH3MaterialData(undefined, {
     keepPreviousData: false,
@@ -88,8 +102,6 @@ const AnalysisMap = () => {
   const handleMapStyleChange = useCallback((newStyle: BasemapValue) => {
     setMapStyle(newStyle);
   }, []);
-
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
   return (
     <div className="absolute top-0 left-0 w-full h-full overflow-hidden" data-testid="analysis-map">

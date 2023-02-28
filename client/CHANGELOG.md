@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - New purple style for scenario select in analysis page. [LANDGRIF-1037](https://vizzuality.atlassian.net/browse/LANDGRIF-1037)
 - Add filter by year on analysis table. [LANDGRIF-965](https://vizzuality.atlassian.net/browse/LANDGRIF-965)
+- Added use-debounce library
+
+### Changed
+- Changed map component to include view state change debounce
+- Changed impact layer resolution to accomodate zoom value [LANDGRIF-1131](https://vizzuality.atlassian.net/browse/LANDGRIF-1131)
 
 ### Changed
 - Intervention form: list only supported location types.

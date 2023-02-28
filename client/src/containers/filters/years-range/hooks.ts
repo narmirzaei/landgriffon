@@ -24,7 +24,7 @@ export function useYearsRange({
   );
 
   const invalidRange = useMemo(
-    () => endYear - startYear < yearsGap,
+    () => endYear && startYear && endYear - startYear < yearsGap,
     [endYear, startYear, yearsGap],
   );
   const firstYear = years[0];
