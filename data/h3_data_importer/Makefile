@@ -492,7 +492,6 @@ download-woodpulp:
 convert-woodpulp: download-woodpulp
 	python	raster_to_h3.py	$(WORKDIR_WOODPULP)/ha		h3_grid_woodpulp_ha		harvest_area	gfw_plantations		2021	--h3-res=6	--thread-count=$(PARALLELIZATION_FACTOR)
 	python	raster_to_h3.py	$(WORKDIR_WOODPULP)/prod	h3_grid_woodpulp_prod	production		gfw_plantations		2021	--h3-res=6	--thread-count=$(PARALLELIZATION_FACTOR)
-	#python	raster_to_h3.py	$(WORKDIR_WOODPULP)/prod	h3_grid_woodpulp_prod_new	production		gfw_plantations		2021	--h3-res=6
 ###################
 # Contextual data #
 ###################
