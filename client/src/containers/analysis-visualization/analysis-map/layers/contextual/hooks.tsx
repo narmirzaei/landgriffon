@@ -5,16 +5,21 @@ import { useAppSelector } from 'store/hooks';
 import { analysisMap } from 'store/features/analysis';
 import { MapboxLayerProps } from 'components/map/layers/types';
 import { useAllContextualLayersData } from 'hooks/h3-data/contextual';
+import DeckLayer from 'components/map/layers/deck';
 
 import type { LayerProps, LayerSettings } from 'components/map/layers/types';
 import type { Layer } from 'types';
 
-export function useLayer({
+export const ContextualDeckLayer = ({
   id,
+  beforeId,
+  zIndex,
   ...props
 }: {
   id: Layer['id'];
-} & LayerProps<LayerSettings>['settings']) {
+  beforeId: LayerProps<LayerSettings>['beforeId'];
+  zIndex: LayerProps<LayerSettings>['zIndex'];
+} & LayerProps<LayerSettings>['settings']) => {
   const { onHoverLayer } = props;
   const { layerDeckGLProps, layers: layersMetadata } = useAppSelector(analysisMap);
 
@@ -49,5 +54,12 @@ export function useLayer({
     } satisfies MapboxLayerProps<H3HexagonLayerProps<(typeof data)[0]>>;
   }, [data, settings, metadata, onHoverLayer]);
 
-  return layer;
-}
+  return (
+    <DeckLayer<H3HexagonLayerProps<(typeof layer.data)[0]>>
+      {...layer}
+      id={id}
+      beforeId={beforeId}
+      zIndex={zIndex}
+    />
+  );
+};
