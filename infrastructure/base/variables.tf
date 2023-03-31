@@ -15,7 +15,7 @@ variable "domain" {
 }
 
 variable "aws_region" {
-  default     = "eu-west-3"
+  default     = "eu-central-1"
   type        = string
   description = "A valid AWS region to configure the underlying AWS SDK."
 }

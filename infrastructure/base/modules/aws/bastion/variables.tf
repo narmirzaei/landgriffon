@@ -22,7 +22,7 @@ variable "subnet_id" {
 
 variable "availability_zones" {
   type        = list(string)
-  default     = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]
+  default     = ["eu-central-1"]
   description = "A list of availability zones for subnet placement."
 }
 

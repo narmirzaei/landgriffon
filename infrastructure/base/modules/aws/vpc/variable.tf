@@ -34,7 +34,7 @@ variable "private_subnet_cidr_blocks" {
 
 variable "availability_zones" {
   type        = list(string)
-  default     = ["eu-west-3a", "eu-west-3b"]
+  default     = ["eu-central-1"]
   description = "A list of availability zones for subnet placement."
 }
 
