@@ -90,7 +90,7 @@ resource "aws_ecs_task_definition" "data-import" {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-region        = "eu-west-3",
+          awslogs-region        = "eu-central-1",
           awslogs-group         = "data-import",
           awslogs-stream-prefix = "data-import",
           awslogs-create-group  = "true"

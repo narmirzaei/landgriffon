@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    region         = "eu-west-3"
+    region         = "eu-central-1"
     key            = "kubernetes.tfstate"
     dynamodb_table = "aws-locks"
     encrypt        = true
