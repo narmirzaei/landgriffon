@@ -35,20 +35,7 @@ resource "github_actions_secret" "mapbox_api_token_secret" {
 }
 
 module "environment" {
-  for_each = merge(var.environments, {
-    staging = merge({
-      load_fresh_data       = false
-      data_import_arguments = ["seed-data"]
-      image_tag             = "staging"
-    }, lookup(var.environments, "staging", {})),
-    production = merge({
-      load_fresh_data       = false
-      data_import_arguments = ["seed-data"]
-      image_tag             = "main"
-    }, lookup(var.environments, "production", {})),
-  })
-  source = "./modules/env"
-
+  environments                       = var.environments
   cluster_name                       = data.terraform_remote_state.core.outputs.eks_cluster_name
   project_name                       = var.project_name
   environment                        = each.key

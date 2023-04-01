@@ -14,9 +14,5 @@ environments = {
 		data_import_arguments : ["seed-data"],
 		image_tag : "dev",
     aws_region: "eu-central-1"
-  },
-  test : {},
-  tetrapack : {
-  },
-  demo : {}
+  }
 }
